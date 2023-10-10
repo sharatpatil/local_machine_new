@@ -4,15 +4,18 @@ const app = express();
 const bodyParser = require('body-parser');
 const PORT = 3000;
 const os = require('os');
-const qs = require('qs');
+const qs1 = require('qs');
 const { exec } = require('child_process');
-const { request } = require('http');
-const axios = require('axios');
+const http = require('http');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 
 const twilio = require('twilio');
 const cron = require('node-cron');
+
+var https = require('follow-redirects').https;
+var qs = require('querystring');
+
 
 const accountSid = 'AC8e77af3cdc4978fb3a3e9ea45f5d2728';
 const authToken = 'ba7640d41d11626969548e953b6d106a';
@@ -29,37 +32,136 @@ app.get('/', (req, res)=>{
 	res.send("Welcome to root URL of Server");
 });
 
+// async function myTriggeredFunction(part, parameter, values) {
+//   try {
+//     const data = qs.stringify({
+//       'module': 'TRANS_SMS',
+//       'apikey': '8f9f930b-01f3-11ee-addf-0200cd936042',
+//       'to': '918139081300,919496001112,919825404757,918292244660',
+//       // 'to':'916364124241',
+//       'from': 'PQSIVM',
+//       'msg': `Data Points Outside the Limits. Following are the details
+//     Part Number: ${part}
+//     Parameter Name: ${parameter}
+//     Value: ${values} -PQSI`
+//     });
+
+//     const config = {
+//       method: 'post',
+//       maxBodyLength: Infinity,
+//       url: 'https://2factor.in/API/R1/',
+//       headers: {},
+//       data: data
+//     };
+
+//     const response = await axios(config);
+//     console.log(JSON.stringify(response.data));
+//     return response.data;
+//   } catch (error) {
+//     console.error(error);
+//     throw error; // Re-throw the error to be caught by the caller
+//   }
+// }
+
+
 async function myTriggeredFunction(part, parameter, values) {
   try {
-    const data = qs.stringify({
-      'module': 'TRANS_SMS',
-      'apikey': '8f9f930b-01f3-11ee-addf-0200cd936042',
-      'to': '918139081300,919496001112,919825404757,918292244660',
-      // 'to':'916364124241',
-      'from': 'PQSIVM',
-      'msg': `Data Points Outside the Limits. Following are the details
-    Part Number: ${part}
-    Parameter Name: ${parameter}
-    Value: ${values} -PQSI`
-    });
-
-    const config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://2factor.in/API/R1/',
+    var options = {
+      method: 'POST',
+      hostname: '2factor.in',
+      path: '/API/R1/',
       headers: {},
-      data: data
+      maxRedirects: 20,
     };
 
-    const response = await axios(config);
-    console.log(JSON.stringify(response.data));
-    return response.data;
+    var req = https.request(options, function (res) {
+      var chunks = [];
+
+      res.on('data', function (chunk) {
+        chunks.push(chunk);
+      });
+
+      res.on('end', function () {
+        var body = Buffer.concat(chunks);
+        console.log(body.toString());
+      });
+
+      res.on('error', function (error) {
+        console.error(error);
+      });
+    });
+
+    var postData = qs.stringify({
+      'module': 'TRANS_SMS',
+      'apikey': '8f9f930b-01f3-11ee-addf-0200cd936042',
+      // 'to':'916364124241',
+      'to': '918139081300,919496001112,919825404757,918292244660',
+      'from': 'PQSIVM',
+       'msg': `Data Points Outside the Limits. Following are the details
+     Part Number: ${part}
+     Parameter Name: ${parameter}
+    Value: ${values} -PQSI`,
+    });
+
+    req.write(postData);
+
+    req.end();
   } catch (error) {
     console.error(error);
     throw error; // Re-throw the error to be caught by the caller
   }
 }
 
+// async function myTriggeredFunction(part, parameter, values) {
+//   try {
+//     const data = JSON.stringify({
+//       module: 'TRANS_SMS',
+//       apikey: '8f9f930b-01f3-11ee-addf-0200cd936042',
+//       // to: '918139081300,919496001112,919825404757,918292244660',
+//       to: '916364124241',
+//       from: 'PQSIVM',
+//       msg: `Data Points Outside the Limits. Following are the details
+//     Part Number: ${part}
+//     Parameter Name: ${parameter}
+//     Value: ${values} -PQSI`
+//     });
+
+//     const options = {
+//       method: 'POST',
+//       hostname: '2factor.in',
+//       path: '/API/R1/',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Content-Length': data.length
+//       }
+//     };
+
+//     const req = http.request(options, (res) => {
+//       let responseData = '';
+//       res.on('data', (chunk) => {
+//         responseData += chunk;
+//       });
+
+//       res.on('end', () => {
+//         console.log(responseData);
+//         // You can parse responseData if it's JSON
+//         // const parsedData = JSON.parse(responseData);
+//         // console.log(parsedData);
+//       });
+//     });
+
+//     req.on('error', (error) => {
+//       console.error(error);
+//       throw error; // Re-throw the error to be caught by the caller
+//     });
+
+//     req.write(data);
+//     req.end();
+//   } catch (error) {
+//     console.error(error);
+//     throw error; // Re-throw the error to be caught by the caller
+//   }
+// }
 
 
 
