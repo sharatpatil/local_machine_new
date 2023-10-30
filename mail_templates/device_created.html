@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>New Device Created</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Data Point Outside the Limits</h1>
+  <p>Data Point Outside the Limits with the following details:</p>
+  <table>
+    <tr>
+      <th>Part Number</th>
+      <th>Identifier 1</th>
+      <th>Identifier 2</th>
+      <th>Identifier 3</th>
+    </tr>
+    <tr>
+      <td>{{deviceNumber1}}</td>
+      <td>{{deviceNumber2}}</td>
+      <td>{{deviceNumber3}}</td>
+      <td>{{deviceNumber4}}</td>
+    </tr>
+  </table>
+  <br>
+  <table>
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td>{{paramName}} </td>
+      <td>{{paramValue}}</td>
+    </tr>
+  </table>
+</body>
+</html>

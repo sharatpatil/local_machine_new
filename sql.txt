@@ -1,0 +1,63 @@
+SQL QUERY ..
+
+
+CREATE TABLE devices(
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  device_id NVARCHAR(255),
+  device_number1 NVARCHAR(255),
+  device_number2 NVARCHAR (255),
+  device_number3 NVARCHAR (255),
+  device_number4 NVARCHAR (255),
+  parameter_name1 NVARCHAR(255),
+  parameter_name2 NVARCHAR(255),
+  parameter_name3 NVARCHAR(255),
+  parameter_name4 NVARCHAR(255),
+  parameter_name5 NVARCHAR(255),
+  parameter_name6 NVARCHAR(255),
+  parameter_name7 NVARCHAR(255),
+  parameter_name8 NVARCHAR(255),
+  parameter_name9 NVARCHAR(255),
+  parameter_name10 NVARCHAR(255),
+  device_name NVARCHAR(255),
+  parameter1 NVARCHAR(255),
+  parameter2 NVARCHAR(255),
+  parameter3 NVARCHAR(255),
+  parameter4 NVARCHAR(255),
+  parameter5 NVARCHAR(255),
+  parameter6 NVARCHAR(255),
+  parameter7 NVARCHAR(255),
+  parameter8 NVARCHAR(255),
+  parameter9 NVARCHAR(255),
+  parameter10 NVARCHAR(255),
+  user_id INT,
+  created_at DATETIME DEFAULT GETDATE(),
+  updated_at DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Config
+(
+    id INT PRIMARY KEY IDENTITY(1,1),
+    parameter_name NVARCHAR(255),
+    upper_limit DECIMAL(10,4),
+    lower_limit DECIMAL(10,4),
+    createdAt DATETIME,
+    updatedAt DATETIME
+);
+
+
+INSERT INTO Config (parameter_name, upper_limit, lower_limit)
+VALUES ('parameter1', 10, 8),
+       ('parameter2', 5, 4),
+       ('parameter3', 20.2, 0),
+       ('parameter4', 12.8, 0),
+       ('parameter5', 18.9, 0),
+       ('parameter6', 22.1, 0),
+       ('parameter7', 16.7, 0),
+       ('parameter8', 9.3, 0),
+       ('parameter9', 11.6, 0),
+       ('parameter10', 14.2, 0);
+
+
+https://drive.google.com/file/d/1GDnPS7BjGyYSP-kqntQHHTQ6JlvPvX4V/view?usp=sharing
+
+
