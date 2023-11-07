@@ -91,7 +91,7 @@ async function myTriggeredFunction(part, parameter, values) {
 const config = {
     user: 'sa',
     password: 'sa123',
-    server: Config.MysqlServer,
+    server: 'SQCPACKSYSTEM\\SQLEXPRESS',
     // server: 'DESKTOP-0EIKRB0\\SQLSERVER',
     database: 'test',
     options: {           
@@ -207,24 +207,24 @@ if (numericValues.length > 0) {
         }
       });
 
-    //   const result =  myTriggeredFunction(deviceNumber1, 'Average of Parameters', average);
+      const result =  myTriggeredFunction(deviceNumber1, 'Average of Parameters', average);
     
-        const phoneNumber = Config.phoneNumbers;
-        const smsMessage = `Data Point Outside the Limits with the following details \n Part Number: ${deviceNumber1} \n Parameter Name: 'Average Parameters' \n Avg Value: ${average}`;
+        // const phoneNumber = Config.phoneNumbers;
+        // const smsMessage = `Data Point Outside the Limits with the following details \n Part Number: ${deviceNumber1} \n Parameter Name: 'Average Parameters' \n Avg Value: ${average}`;
     
     
-        const smsPromises = phoneNumber.map((phoneNumber) => {
+        // const smsPromises = phoneNumber.map((phoneNumber) => {
           
     
-          client.messages
-          .create({
-            body: smsMessage,
-            from: '+12187789426',
-            to: phoneNumber
-          })
-          .then((message) => console.log('SMS sent:', message.sid))
-          .catch((error) => console.error('SMS error:', error));
-        });
+        //   client.messages
+        //   .create({
+        //     body: smsMessage,
+        //     from: '+12187789426',
+        //     to: phoneNumber
+        //   })
+        //   .then((message) => console.log('SMS sent:', message.sid))
+        //   .catch((error) => console.error('SMS error:', error));
+        // });
 
     }
 }
