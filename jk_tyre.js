@@ -91,7 +91,8 @@ async function myTriggeredFunction(part, parameter, values) {
 const config = {
     user: 'sa',
     password: 'sa123',
-    server: 'SQCPACKSYSTEM\\SQLEXPRESS',
+    // server: 'SQCPACKSYSTEM\\SQLEXPRESS',
+    server: Config.MysqlServer,
     // server: 'DESKTOP-0EIKRB0\\SQLSERVER',
     database: 'test',
     options: {           

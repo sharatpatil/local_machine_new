@@ -58,10 +58,5 @@ VALUES ('parameter1', 10, 8),
        ('parameter10', 14.2, 0);
 
 
-https://drive.google.com/file/d/1GDnPS7BjGyYSP-kqntQHHTQ6JlvPvX4V/view?usp=sharing
 
-https://drive.google.com/file/d/1rRnv0xVYXSEbuM-0HCv_7s_dfodtMIOH/view?usp=sharing
-
-https://drive.google.com/file/d/1qHpn7slpMJgZo9IV6nRIN9jWtusBa0sd/view?usp=sharing
-
-
+IDS: https://drive.google.com/drive/folders/1LnjQEqID65m3qKEK4PwyXecGE4QeeN5M?usp=sharing

@@ -9,7 +9,7 @@ const { exec } = require('child_process');
 const http = require('http');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
-
+const Config = require('./Config.json');
 const twilio = require('twilio');
 const cron = require('node-cron');
 
@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 
 app.get('/', (req, res)=>{
 	res.status(200);
-	res.send("Welcome to root URL of Server");
+	res.send("Welcome to root URL of IDS Messenger Server");
 });
 
 // async function myTriggeredFunction(part, parameter, values) {
@@ -95,7 +95,8 @@ async function myTriggeredFunction(part, parameter, values) {
       'module': 'TRANS_SMS',
       'apikey': '8f9f930b-01f3-11ee-addf-0200cd936042',
       // 'to':'916364124241',
-      'to': '918139081300,919496001112,919825404757,918292244660',
+      // 'to': '918139081300,919496001112,919825404757,918292244660',
+      'to': Config.phoneNumbers,
       'from': 'PQSIVM',
        'msg': `Data Points Outside the Limits. Following are the details
      Part Number: ${part}
@@ -166,11 +167,12 @@ async function myTriggeredFunction(part, parameter, values) {
 
 
 const config = {
-    user: 'sa',
-    password: 'sa123',
-    server: 'SQCPACKSYSTEM\\SQLEXPRESS',
+    user: Config.database_user,
+    password: Config.database_pass,
+    // server: 'SQCPACKSYSTEM\\SQLEXPRESS',
+    server: Config.MysqlServer,
     // server: 'DESKTOP-0EIKRB0\\SQLSERVER',
-    database: 'test',
+    database: Config.database_name,
     options: {           
         encrypt: false
     }
@@ -228,8 +230,8 @@ sql.connect(config)
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'sqcpack.co.in@gmail.com',
-    pass: 'sxiyujgfvijcwdrv'
+    user: Config.auth.user,
+    pass: Config.auth.pass
   }
 });
 
@@ -257,8 +259,8 @@ let hasExceededLimits = false
           .replace('{{paramValue}}', paramValue || '');
 
         const mailOptions = {
-          from: 'sqcpack.co.in@gmail.com',
-          to: ['retheeshzahi@gmail.com','Shafizahi@gmail.com',' Abdul.rahim@ceat.com','Sunny.singj@ceat.com'],
+          from: Config.auth.user,
+          to: Config.recipients,
           subject: 'Alert: Data Point Outside the Limits',
           html: emailBody
         };
@@ -431,14 +433,14 @@ function sendEmailWithAttachment(excelBuffer) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'sqcpack.co.in@gmail.com',
-      pass: 'sxiyujgfvijcwdrv'
+      user: Config.auth.user,
+      pass: Config.auth.pass
     }
   });
 
   const mailOptions = {
-    from: 'sqcpack.co.in@gmail.com',
-    to: ['sharathkumarpatil06@gmail.com','retheeshzahi@gmail.com','Shafizahi@gmail.com',' Abdul.rahim@ceat.com','Sunny.singj@ceat.com'],
+    from: Config.auth.user,
+    to: Config.recipients,
     subject: 'IDS Data Report',
     text: 'Please find attached today data report',
     attachments: [

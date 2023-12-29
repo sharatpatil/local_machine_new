@@ -5,6 +5,11 @@
       "pass": "sxiyujgfvijcwdrv"
     },
     "MysqlServer":"DESKTOP-0EIKRB0\\SQLSERVER",
+    "database_name":"test",
+    "database_pass":"sa123",
+    "database_user":"sa",
+
+
     "recipients": ["retheeshzahi@gmail.com", "Shafizahi@gmail.com", "Abdul.rahim@ceat.com", "Sunny.singh@ceat.com"],
     "subject": "Alert: Average Parameter Value Exceeds the Limits",
     "phoneNumbers": ["+918139081300", "+919496001112", "+919825404757", "+918292244660"]
