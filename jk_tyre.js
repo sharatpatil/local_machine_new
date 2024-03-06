@@ -89,12 +89,12 @@ async function myTriggeredFunction(part, parameter, values) {
 
 
 const config = {
-    user: 'sa',
-    password: 'sa123',
+    user: Config.database_user,
+    password: Config.database_pass,
     // server: 'SQCPACKSYSTEM\\SQLEXPRESS',
     server: Config.MysqlServer,
     // server: 'DESKTOP-0EIKRB0\\SQLSERVER',
-    database: 'test',
+    database: Config.database_name,
     options: {           
         encrypt: false
     }
