@@ -34,6 +34,31 @@ app.get('/', (req, res)=>{
 	res.send("Welcome to root URL of Server");
 });
 
+app.get('/send_report', async (req,res) =>{
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set the time to the beginning of the day
+
+    // Modify your SQL query to select records created today
+     const query1 = `SELECT * FROM devices WHERE created_at >= @today`;
+    
+    // const query1 = `Select * from devices`
+    const request = new sql.Request();
+    request.input('today', sql.Date, today);
+    const result = await request.query(query1);
+    const devices = result.recordset;
+
+    // const devices = await request.query(query1);
+
+    const excelBuffer = await generateExcel(devices);
+    sendEmailWithAttachment(excelBuffer);
+    res.send('Email sent with Excel attachment.');
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to fetch data from the database' });
+  }
+})
+
 
 
 
@@ -325,6 +350,7 @@ if (numericValues.length > 0) {
 
     // Modify your SQL query to select records created today
     const query1 = `SELECT * FROM devices WHERE created_at >= @today`;
+    // const query1 = `Select * from devices`
     const request = new sql.Request();
     request.input('today', sql.Date, today);
     const result = await request.query(query1);
@@ -351,34 +377,42 @@ async function generateExcel(data) {
   let hasData = false;
 
   data.forEach(row => {
+
+     // Convert created_at to a JavaScript Date object
+  const createdAtDate = new Date(row.created_at);
+
+  // Format the date as desired, for example: YYYY-MM-DD HH:mm:ss
+  const formattedCreatedAt = createdAtDate.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+
+
     const rowData = [
       row.id || '',
-      row.deviceId || '',
-      row.deviceNumber1 || '',
-      row.indenfier || '',
-      row.parameterName1 || '',
+      row.device_id || '',
+      row.device_number1 || '',
+      row.device_number2 || '',
+      row.parameter_name1 || '',
       row.parameter1 || '',
-      row.parameterName2 || '',
+      row.parameter_name2 || '',
       row.parameter2 || '',
-      row.parameterName3 || '',
+      row.parameter_name3 || '',
       row.parameter3 || '',
-      row.parameterName4 || '',
+      row.parameter_name4 || '',
       row.parameter4 || '',
-      row.parameterName5 || '',
+      row.parameter_name5 || '',
       row.parameter5 || '',
-      row.parameterName6 || '',
+      row.parameter_name6 || '',
       row.parameter6 || '',
-      row.parameterName7 || '',
+      row.parameter_name7 || '',
       row.parameter7 || '',
-      row.parameterName8 || '',
+      row.parameter_name8 || '',
       row.parameter8 || '',
-      row.parameterName9 || '',
+      row.parameter_name9 || '',
       row.parameter9 || '',
-      row.parameterName10 || '',
+      row.parameter_name10 || '',
       row.parameter10 || '',
-      row.created_at || ''
+     formattedCreatedAt || ''
     ];
-
+    console.log("created_at value:", row.created_at); // Log created_at value
     worksheet.addRow(rowData);
 
     // Check if any row value is present
