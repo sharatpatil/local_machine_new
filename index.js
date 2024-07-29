@@ -9,7 +9,7 @@ const { exec } = require('child_process');
 const http = require('http');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
-const Config = require('./Config.json');
+// const Config = require('./Config.json');
 const twilio = require('twilio');
 const cron = require('node-cron');
 
@@ -166,6 +166,33 @@ async function myTriggeredFunction(part, parameter, values) {
 
 
 
+// Read the contents of the JSON file synchronously
+const configJson = fs.readFileSync('Config.json', 'utf-8');
+
+// Parse the JSON string into a JavaScript object
+const Config = JSON.parse(configJson);
+
+// Check if the required properties are present and of the correct type
+if (typeof Config.MysqlServer !== 'string' || 
+    typeof Config.database_name !== 'string' || 
+    typeof Config.database_pass !== 'string' || 
+    typeof Config.database_user !== 'string') {
+    throw new Error('Error connecting to MySQL Server: The required properties are missing or not of type string.');
+}
+
+// Now you can use the Config object
+console.log(`MySQL Server: ${Config.MysqlServer}`);
+console.log(`Database Name: ${Config.database_name}`);
+console.log(`Database User: ${Config.database_user}`);
+// console.log(`Database Password: ${Config.database_pass}`);
+
+
+
+
+
+
+
+
 const config = {
     user: Config.database_user,
     password: Config.database_pass,
@@ -178,14 +205,18 @@ const config = {
     }
 };
 
+// Connect to SQL Server
 sql.connect(config)
-  .then(() => {
-    console.log('Connected to the MSSQL database.')
-  })
-  .catch((err) => {
-    console.error('Error:', err);
-  });
+    .then(pool => {
+        console.log('Connected to SQL Server');
+    })
+    .catch(err => {
+        console.error('Error connecting to SQL Server:', err);
+    });
 
+
+
+    
   app.post('/devices', async (req, res) => {
     try {
       const deviceData = req.body;
