@@ -212,3 +212,6 @@ app.get('/search', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
+
+
+CREATE INDEX bpsi.data_pg_trm_idx ON bpsi.intv_XXXXXXXX USING GIN (data gin_trgm_ops); 
