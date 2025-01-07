@@ -158,3 +158,62 @@ app.get('/search', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
+
+
+
+
+
+latest
+
+const express = require('express');
+const { Client } = require('pg');
+const app = express();
+const port = 3000;
+
+// Setup PostgreSQL client
+const client = new Client({
+    host: 'localhost', // PostgreSQL host
+    port: 5432,        // PostgreSQL port
+    user: 'your_user', // PostgreSQL user
+    password: 'your_password', // PostgreSQL password
+    database: 'your_database'  // Database name
+});
+
+// Connect to PostgreSQL database
+client.connect();
+
+// Route for searching a specific value in JSON column of a single table using regex or fuzzy search
+app.get('/search', async (req, res) => {
+    const { search, table, column } = req.query;  // Retrieve search text, table, and column from query params
+
+    if (!search || !table || !column) {
+        return res.status(400).send('Please provide search term, table, and column.');
+    }
+
+    try {
+        // Use regex for pattern matching in JSONB column or use fuzzy search with pg_trgm extension
+        const query = `
+            SELECT * 
+            FROM ${table}
+            WHERE ${column}::text ~* $1  -- Using case-insensitive regex match for JSONB field
+            OR ${column}::text % $1     -- Using fuzzy search with pg_trgm
+        `;
+
+        // Perform the query with the provided search value
+        const result = await client.query(query, [`${search}`]);
+
+        // Return the search results
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error querying database:', error);
+        res.status(500).send('An error occurred while searching the database.');
+    }
+});
+
+// Start the Express server
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
+
+
+http://localhost:3000/search?search=John&table=users&column=profile
