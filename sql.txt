@@ -92,3 +92,69 @@ BEGIN
         EXECUTE query;
     END LOOP;
 END $$;
+
+
+const express = require('express');
+const { Client } = require('pg');
+const app = express();
+const port = 3000;
+
+// Setup PostgreSQL client
+const client = new Client({
+    host: 'localhost', // Update with your PostgreSQL host
+    port: 5432,        // Update with your PostgreSQL port
+    user: 'your_user', // Update with your PostgreSQL user
+    password: 'your_password', // Update with your PostgreSQL password
+    database: 'your_database'  // Update with your database name
+});
+
+// Connect to PostgreSQL database
+client.connect();
+
+// Route for searching a specific value across all JSON columns in the database
+app.get('/search', async (req, res) => {
+    const searchValue = req.query.value;  // Take search value from query params
+
+    if (!searchValue) {
+        return res.status(400).send('Please provide a search value.');
+    }
+
+    try {
+        // Get all JSON columns from the database
+        const result = await client.query(`
+            SELECT table_name, column_name
+            FROM information_schema.columns
+            WHERE data_type IN ('json', 'jsonb')
+        `);
+
+        // Loop through all tables and columns and dynamically search each JSON column
+        const queries = result.rows.map(row => {
+            const { table_name, column_name } = row;
+
+            return client.query(`
+                SELECT '${table_name}' AS table_name, * 
+                FROM ${table_name}
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM jsonb_each_text(${table_name}.${column_name}) AS kv
+                    WHERE kv.value = $1
+                )
+            `, [searchValue]);
+        });
+
+        // Execute all queries concurrently
+        const searchResults = await Promise.all(queries);
+
+        // Flatten the results and send them as the response
+        const flattenedResults = searchResults.flatMap(result => result.rows);
+        res.json(flattenedResults);
+    } catch (error) {
+        console.error('Error querying database:', error);
+        res.status(500).send('An error occurred while searching the database.');
+    }
+});
+
+// Start the Express server
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
