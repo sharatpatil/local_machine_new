@@ -1,4 +1,4 @@
-SQL QUERY ..
+hiSQL QUERY ..
 
 
 CREATE TABLE devices(
@@ -64,3 +64,31 @@ IDS: https://drive.google.com/drive/folders/1LnjQEqID65m3qKEK4PwyXecGE4QeeN5M?us
 IDS AVG : https://drive.google.com/drive/folders/1H4gzaV54opIDYxW9fjD-jGQD8_5lrKmw?usp=sharing
 
 https://drive.google.com/drive/folders/1H4gzaV54opIDYxW9fjD-jGQD8_5lrKmw?usp=sharing
+
+
+DO $$ 
+DECLARE
+    r RECORD;
+    search_term TEXT := 'John';  -- Replace with your search term
+    query TEXT;
+BEGIN
+    -- Loop over all tables and JSON columns
+    FOR r IN 
+        SELECT table_name, column_name
+        FROM information_schema.columns
+        WHERE data_type IN ('json', 'jsonb')
+    LOOP
+        -- Dynamically generate query for full-text search across JSON data
+        query := format('
+            SELECT ''%s'' AS table_name, * 
+            FROM %I 
+            WHERE to_tsvector(''english'', 
+                string_agg(kv.key || '':'|| kv.value, '' ')) 
+                @@ plainto_tsquery(''english'', %L)
+            FROM jsonb_each_text(%I.%I) AS kv', 
+            r.table_name, r.table_name, search_term, r.column_name);
+        
+        -- Execute the dynamically generated query
+        EXECUTE query;
+    END LOOP;
+END $$;
