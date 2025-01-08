@@ -215,3 +215,57 @@ app.listen(port, () => {
 
 
 CREATE INDEX bpsi.data_pg_trm_idx ON bpsi.intv_XXXXXXXX USING GIN (data gin_trgm_ops); 
+
+latest today
+
+CREATE INDEX data_pg_trgm_idx ON intv_XXXXXXXX USING GIN (data gin_trgm_ops);
+
+
+CREATE INDEX data_jsonb_idx ON intv_XXXXXXXX USING GIN (data jsonb_path_ops);
+
+const result = await pool.query(
+  `SELECT * FROM intv_XXXXXXXX WHERE data::text ILIKE $1 LIMIT 50 OFFSET 0`,
+  [`%${query}%`]
+);
+
+
+const { Pool } = require('pg');
+const pool = new Pool();
+
+app.get('/stream-search', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const query = `SELECT * FROM intv_XXXXXXXX WHERE data::text ILIKE $1`;
+    const stream = client.query(new QueryStream(query, [`%${req.query.term}%`]));
+
+    stream.pipe(res);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+
+const redis = require('redis');
+const redisClient = redis.createClient();
+
+app.post('/search', async (req, res) => {
+  const { query } = req.body;
+  const cacheKey = `search:${query}`;
+
+  redisClient.get(cacheKey, async (err, cachedData) => {
+    if (cachedData) {
+      return res.json(JSON.parse(cachedData));
+    }
+
+    const result = await pool.query(
+      `SELECT * FROM intv_XXXXXXXX WHERE data::text ILIKE $1`,
+      [`%${query}%`]
+    );
+
+    redisClient.setex(cacheKey, 3600, JSON.stringify(result.rows)); // Cache for 1 hour
+    res.json(result.rows);
+  });
+});
