@@ -335,3 +335,13 @@ app.get('/stream', streamData);
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
+
+
+node:_http_outgoing:945
+    throw new ERR_INVALID_ARG_TYPE(
+    ^
+
+TypeError [ERR_INVALID_ARG_TYPE]: The "chunk" argument must be of type string or an instance of Buffer or Uint8Array. 
+Received an instance of Object
+
+
