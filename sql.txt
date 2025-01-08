@@ -1,4 +1,4 @@
-hiSQL QUERY ..
+hhhiSQL QUERY ..
 
 
 CREATE TABLE devices(
@@ -269,3 +269,15 @@ app.post('/search', async (req, res) => {
     res.json(result.rows);
   });
 });
+
+
+SELECT * FROM pg_available_extensions WHERE name = 'pg_trgm';
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE INDEX data_pg_trgm_idx ON intv_XXXXXXXX USING GIN (data gin_trgm_ops);
+
+SELECT * FROM intv_XXXXXXXX WHERE data::text ILIKE '%search_term%';
+
+CREATE INDEX data_jsonb_idx ON intv_XXXXXXXX USING GIN (data jsonb_path_ops);
+
