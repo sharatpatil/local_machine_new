@@ -408,3 +408,74 @@ app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
 
+
+
+
+const express = require('express');
+const { Pool } = require('pg');
+const redis = require('redis');
+
+const app = express();
+app.use(express.json());
+
+// PostgreSQL configuration
+const pool = new Pool({
+  user: 'your_username',
+  host: 'your_host',
+  database: 'your_database',
+  password: 'your_password',
+  port: 5432, // Default PostgreSQL port
+});
+
+// Redis configuration
+const redisClient = redis.createClient();
+redisClient.on('error', (err) => console.error('Redis Error:', err));
+
+// API to search with caching and pagination
+app.get('/search', async (req, res) => {
+  const { term, page = 1, limit = 10 } = req.query;
+
+  // Calculate offset for pagination
+  const offset = (page - 1) * limit;
+
+  // Cache key based on search term and pagination
+  const cacheKey = `search:${term}:page:${page}:limit:${limit}`;
+
+  try {
+    // Check if data is already in cache
+    redisClient.get(cacheKey, async (err, cachedData) => {
+      if (err) {
+        console.error('Redis Get Error:', err);
+        res.status(500).send('Internal server error');
+        return;
+      }
+
+      if (cachedData) {
+        // Send cached data
+        console.log('Serving from cache');
+        res.json(JSON.parse(cachedData));
+      } else {
+        // Query database
+        const result = await pool.query(
+          `SELECT * FROM intv_XXXXXXXX WHERE data::text ILIKE $1 LIMIT $2 OFFSET $3`,
+          [`%${term}%`, limit, offset]
+        );
+
+        // Cache the result for 1 hour (3600 seconds)
+        redisClient.setex(cacheKey, 3600, JSON.stringify(result.rows));
+
+        // Send response
+        console.log('Serving from database');
+        res.json(result.rows);
+      }
+    });
+  } catch (err) {
+    console.error('Database Error:', err);
+    res.status(500).send('Internal server error');
+  }
+});
+
+// Start the server
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
