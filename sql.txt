@@ -281,3 +281,57 @@ SELECT * FROM intv_XXXXXXXX WHERE data::text ILIKE '%search_term%';
 
 CREATE INDEX data_jsonb_idx ON intv_XXXXXXXX USING GIN (data jsonb_path_ops);
 
+
+npm install pg-query-stream
+
+
+const { Pool } = require('pg');
+const QueryStream = require('pg-query-stream');
+const { pipeline } = require('stream');
+
+const pool = new Pool({
+  user: 'your_username',
+  host: 'your_host',
+  database: 'your_database',
+  password: 'your_password',
+  port: 5432, // Default PostgreSQL port
+});
+
+async function streamData(req, res) {
+  const client = await pool.connect();
+
+  try {
+    // Define your query
+    const sql = `SELECT * FROM intv_XXXXXXXX WHERE data::text ILIKE $1`;
+    const params = [`%${req.query.search_term}%`];
+
+    // Create a QueryStream instance
+    const queryStream = new QueryStream(sql, params);
+
+    // Execute the query as a stream
+    const stream = client.query(queryStream);
+
+    // Pipe the stream to the response
+    pipeline(stream, res, (err) => {
+      if (err) {
+        console.error('Streaming error:', err);
+        res.status(500).send('Streaming error');
+      }
+    });
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).send('Database error');
+  } finally {
+    client.release();
+  }
+}
+
+// Example Express route
+const express = require('express');
+const app = express();
+
+app.get('/stream', streamData);
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
