@@ -345,3 +345,66 @@ TypeError [ERR_INVALID_ARG_TYPE]: The "chunk" argument must be of type string or
 Received an instance of Object
 
 
+
+const { Pool } = require('pg');
+const QueryStream = require('pg-query-stream');
+const { Transform } = require('stream');
+const { pipeline } = require('stream');
+
+const pool = new Pool({
+  user: 'your_username',
+  host: 'your_host',
+  database: 'your_database',
+  password: 'your_password',
+  port: 5432, // Default PostgreSQL port
+});
+
+async function streamData(req, res) {
+  const client = await pool.connect();
+
+  try {
+    const sql = `SELECT * FROM intv_XXXXXXXX WHERE data::text ILIKE $1`;
+    const params = [`%${req.query.search_term}%`];
+
+    // Create a QueryStream instance
+    const queryStream = new QueryStream(sql, params);
+
+    // Execute the query as a stream
+    const dbStream = client.query(queryStream);
+
+    // Transform the stream into JSON strings
+    const jsonTransform = new Transform({
+      objectMode: true,
+      transform(chunk, encoding, callback) {
+        callback(null, JSON.stringify(chunk) + '\n'); // Convert to JSON and add a newline
+      },
+    });
+
+    // Set response headers for streaming JSON
+    res.setHeader('Content-Type', 'application/json');
+
+    // Pipe the database stream -> JSON transform -> HTTP response
+    pipeline(dbStream, jsonTransform, res, (err) => {
+      if (err) {
+        console.error('Streaming error:', err);
+        res.status(500).send('Streaming error');
+      }
+    });
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).send('Database error');
+  } finally {
+    client.release();
+  }
+}
+
+// Example Express route
+const express = require('express');
+const app = express();
+
+app.get('/stream', streamData);
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+
