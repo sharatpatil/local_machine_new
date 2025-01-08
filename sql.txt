@@ -481,3 +481,5 @@ app.listen(3000, () => {
 });
 
 GET /search?term=example&page=1&limit=10
+
+return Promise.reject(new errors_1.ClientClosedError()); ClientClosedError: The client is closed
