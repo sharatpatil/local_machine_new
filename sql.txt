@@ -721,3 +721,14 @@ app.get('/multi_search', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX data_trgm_idx ON bpsi_intv_6rvginkmsnhgprpfmkalqoe1 USING GIN (data gin_trgm_ops);
+
+ALTER TABLE bpsi_intv_6rvginkmsnhgprpfmkalqoe1 ADD COLUMN document_vector tsvector;
+UPDATE bpsi_intv_6rvginkmsnhgprpfmkalqoe1 SET document_vector = to_tsvector('english', data);
+CREATE INDEX document_vector_idx ON bpsi_intv_6rvginkmsnhgprpfmkalqoe1 USING GIN (document_vector);
+
+
+
