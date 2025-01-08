@@ -483,3 +483,75 @@ app.listen(3000, () => {
 GET /search?term=example&page=1&limit=10
 
 return Promise.reject(new errors_1.ClientClosedError()); ClientClosedError: The client is closed
+
+
+const express = require('express');
+const NodeCache = require('node-cache');
+const { Pool } = require('pg'); // PostgreSQL pool for database queries
+
+const app = express();
+const port = 3000;
+
+// Initialize PostgreSQL connection
+const pool = new Pool({
+  user: 'your_username',
+  host: 'localhost',
+  database: 'your_database',
+  password: 'your_password',
+  port: 5432,
+});
+
+// Initialize cache with a default TTL of 1 hour (3600 seconds)
+const cache = new NodeCache({ stdTTL: 3600 });
+
+/**
+ * Search endpoint with cache
+ */
+app.get('/search', async (req, res) => {
+  const { term = '', page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
+  const cacheKey = `search:${term}:page:${page}:limit:${limit}`; // Unique key for each query
+
+  try {
+    // Check if data exists in cache
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      return res.json({ source: 'cache', data: cachedData });
+    }
+
+    // Query the database if not in cache
+    console.log('Fetching from database');
+    const query = `
+      SELECT * 
+      FROM intv_XXXXXXXX 
+      WHERE data::text ILIKE $1 
+      LIMIT $2 OFFSET $3
+    `;
+    const values = [`%${term}%`, parseInt(limit), parseInt(offset)];
+    const { rows } = await pool.query(query, values);
+
+    // Store results in cache
+    cache.set(cacheKey, rows);
+
+    res.json({ source: 'database', data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
+ * Endpoint to clear the cache (optional for testing)
+ */
+app.get('/clear-cache', (req, res) => {
+  cache.flushAll();
+  res.send('Cache cleared');
+});
+
+/**
+ * Start the server
+ */
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
