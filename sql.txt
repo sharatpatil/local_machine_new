@@ -724,11 +724,39 @@ app.get('/multi_search', async (req, res) => {
 
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+
+
 CREATE INDEX data_trgm_idx ON bpsi_intv_6rvginkmsnhgprpfmkalqoe1 USING GIN (data gin_trgm_ops);
 
 ALTER TABLE bpsi_intv_6rvginkmsnhgprpfmkalqoe1 ADD COLUMN document_vector tsvector;
 UPDATE bpsi_intv_6rvginkmsnhgprpfmkalqoe1 SET document_vector = to_tsvector('english', data);
 CREATE INDEX document_vector_idx ON bpsi_intv_6rvginkmsnhgprpfmkalqoe1 USING GIN (document_vector);
+
+
+step 1 : ALTER TABLE bpsi_intv_6rvginkmsnhgprpfmkalqoe1 ADD COLUMN document_vector tsvector;
+step 2 : UPDATE bpsi_intv_6rvginkmsnhgprpfmkalqoe1 SET document_vector = to_tsvector('english', data);
+step 3 : CREATE INDEX document_vector_idx ON bpsi_intv_6rvginkmsnhgprpfmkalqoe1 USING GIN (document_vector);
+
+
+SELECT * 
+FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
+WHERE document_vector @@ to_tsquery('english', 'word');
+
+
+SELECT * 
+FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
+WHERE document_vector @@ to_tsquery('english', 'word1:*');
+
+SELECT * 
+FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
+WHERE document_vector @@ to_tsquery('english', 'word1 & word2');
+
+
+
+
+
+
 
 
 
