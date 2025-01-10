@@ -821,4 +821,32 @@ app.listen(PORT, () => {
 Error: bind message supplies 3 parameters, but prepared statement "" requires 1
 
 
+app.get('/multi_search', async (req, res) => {
+  const { term = '', page = 1, limit = 100 } = req.query;
+  const offset = (page - 1) * limit;
 
+  try {
+    // Split the term into words
+    const words = term.split(/\s+/).filter(Boolean);
+    const searchQuery = words.map((_, index) => `document_vector @@ to_tsquery('english', $${index + 1})`).join(' AND ');
+
+    // Construct the full query
+    const query = `
+      SELECT *
+      FROM your_table_name
+      WHERE ${searchQuery}
+      LIMIT $${words.length + 1} OFFSET $${words.length + 2};
+    `;
+
+    // Prepare the parameter values
+    const values = [...words, parseInt(limit), parseInt(offset)];
+
+    // Execute the query
+    const { rows } = await pool.query(query, values);
+
+    res.json({ data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
