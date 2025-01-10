@@ -850,3 +850,78 @@ app.get('/multi_search', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
+const express = require('express');
+const { Pool } = require('pg');
+const NodeCache = require('node-cache');
+
+// Initialize app and cache
+const app = express();
+const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 }); // Cache TTL of 1 hour
+
+// PostgreSQL connection pool
+const pool = new Pool({
+  user: 'your_user',
+  host: 'your_host',
+  database: 'your_database',
+  password: 'your_password',
+  port: 5432,
+});
+
+app.get('/multi_search', async (req, res) => {
+  const { term = '', page = 1, limit = 100 } = req.query;
+  const offset = (page - 1) * limit;
+
+  // Create a unique cache key based on query parameters
+  const cacheKey = `multi_search:${term}:page:${page}:limit:${limit}`;
+
+  try {
+    // Check if the result is already in the cache
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      return res.json({ source: 'cache', data: cachedData });
+    }
+
+    // Split the term into words
+    const words = term.split(/\s+/).filter(Boolean); // Split by spaces and remove empty strings
+
+    if (words.length === 0) {
+      return res.status(400).json({ error: 'Search term cannot be empty.' });
+    }
+
+    // Construct search query dynamically
+    const searchQuery = words
+      .map((_, index) => `document_vector @@ to_tsquery('english', $${index + 1})`)
+      .join(' AND ');
+
+    const query = `
+      SELECT *
+      FROM your_table_name
+      WHERE ${searchQuery}
+      LIMIT $${words.length + 1} OFFSET $${words.length + 2};
+    `;
+
+    // Prepare parameter values
+    const values = [...words, parseInt(limit), parseInt(offset)];
+
+    console.log('Fetching from database');
+    const { rows } = await pool.query(query, values);
+
+    // Store the result in cache
+    cache.set(cacheKey, rows);
+
+    res.json({ source: 'database', data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
