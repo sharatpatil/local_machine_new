@@ -818,7 +818,7 @@ app.listen(PORT, () => {
 
 
 
-
+Error: bind message supplies 3 parameters, but prepared statement "" requires 1
 
 
 
