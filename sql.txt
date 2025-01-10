@@ -925,3 +925,11 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
+SELECT indexname, indexdef
+FROM pg_indexes
+WHERE tablename = 'your_table_name';
+
+
+DROP INDEX IF EXISTS document_vector_idx;
