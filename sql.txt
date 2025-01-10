@@ -946,4 +946,50 @@ DROP INDEX IF EXISTS document_vector_idx;
 
 
 
+import React, { useState, useEffect } from "react";
+
+const DynamicJsonDisplay = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // Simulate fetching dynamic JSON data
+    const fetchData = async () => {
+      const dynamicJsonData = await fetch("https://jsonplaceholder.typicode.com/users").then((response) =>
+        response.json()
+      );
+      setData(dynamicJsonData);
+    };
+
+    fetchData();
+  }, []);
+
+  const renderObject = (obj) => {
+    return (
+      <ul>
+        {Object.entries(obj).map(([key, value]) => (
+          <li key={key}>
+            <strong>{key}:</strong>{" "}
+            {typeof value === "object" && value !== null ? renderObject(value) : value.toString()}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  return (
+    <div>
+      <h1>Dynamic JSON Data</h1>
+      {data.map((item, index) => (
+        <div key={index}>
+          <h2>Item {index + 1}</h2>
+          {renderObject(item)}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default DynamicJsonDisplay;
+
+
 
