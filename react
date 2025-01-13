@@ -347,3 +347,19 @@ Cannot read properties of null (reading 'toString')
 text.split is not a function
 TypeError: text.split is not a function
 
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  const regex = new RegExp(`(${searchTerm})`, "gi");
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    part.toLowerCase() === searchTerm.toLowerCase() ? (
+      <span key={index} style={{ backgroundColor: "yellow", fontWeight: "bold" }}>
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
