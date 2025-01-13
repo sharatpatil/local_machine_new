@@ -490,3 +490,27 @@ export default HighlightedCard;
 
 
 Cannot read properties of undefined (reading 'toLowerCase')
+
+
+
+const getHighlightedData = (obj) => {
+  const result = [];
+  Object.entries(obj).forEach(([key, value]) => {
+    const keyStr = key?.toString() || ""; // Ensure key is a string
+    const valueStr = value?.toString() || ""; // Ensure value is a string
+
+    if (
+      (keyStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        valueStr.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      searchTerm
+    ) {
+      result.push({ key: keyStr, value: valueStr });
+    }
+
+    // Recursively check nested objects
+    if (typeof value === "object" && value !== null) {
+      result.push(...getHighlightedData(value));
+    }
+  });
+  return result;
+};
