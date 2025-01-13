@@ -311,3 +311,35 @@ const HighlightedCard = ({ data, searchTerm }) => {
 
 export default HighlightedCard;
 
+
+
+import React from "react";
+import HighlightedCard from "./HighlightedCard";
+
+const App = () => {
+  const jsonData = [
+    {
+      id: 1,
+      name: "John Doe",
+      address: {
+        street: "123 Main St",
+        city: "New York",
+      },
+      hobbies: ["reading", "coding"],
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      address: {
+        street: "456 Elm St",
+        city: "Los Angeles",
+      },
+      hobbies: ["music", "traveling"],
+    },
+  ];
+
+  return <HighlightedCard data={jsonData} searchTerm="Jane" />;
+};
+
+export default App;
+
