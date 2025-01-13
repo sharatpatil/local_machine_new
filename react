@@ -71,3 +71,134 @@ const renderObject = (obj) => {
 
 }
 export default SearchData;
+
+
+
+
+import "./SearchData.scss";
+import { useState } from "react";
+import Chip from "@mui/material/Chip";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import TextField from "@mui/material/TextField";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+
+function SearchData({ data }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [expandedKeys, setExpandedKeys] = useState({});
+
+  const toggleExpand = (key) => {
+    setExpandedKeys((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const highlightText = (text) => {
+    if (!searchTerm) return text;
+
+    const regex = new RegExp(`(${searchTerm})`, "gi");
+    const parts = text.split(regex);
+    return parts.map((part, index) =>
+      part.toLowerCase() === searchTerm.toLowerCase() ? (
+        <span key={index} style={{ backgroundColor: "yellow", fontWeight: "bold" }}>
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const renderObject = (obj, parentKey = "") => {
+    return Object.entries(obj).map(([key, value]) => {
+      const currentKey = parentKey ? `${parentKey}.${key}` : key;
+
+      return (
+        <div key={currentKey} style={{ marginLeft: 20 }}>
+          <button
+            onClick={() => toggleExpand(currentKey)}
+            style={{
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+              color: "blue",
+              fontWeight: "bold",
+            }}
+          >
+            {typeof value === "object" && value !== null
+              ? expandedKeys[currentKey]
+                ? "-"
+                : "+"
+              : ""}
+          </button>
+          <strong>{highlightText(key)}:</strong>{" "}
+          {typeof value === "object" && value !== null ? (
+            expandedKeys[currentKey] ? renderObject(value, currentKey) : null
+          ) : (
+            <span>{highlightText(value.toString())}</span>
+          )}
+        </div>
+      );
+    });
+  };
+
+  const filteredData = data.filter((item) =>
+    JSON.stringify(item).toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div>
+      <div style={{ marginBottom: 20 }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          fullWidth
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      <div>
+        <p className="uuid">Showing {filteredData.length} results</p>
+        <hr />
+      </div>
+      <div>
+        {filteredData.map((item, index) => (
+          <Card key={index} variant="outlined" style={{ marginBottom: 20 }}>
+            <CardContent>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ArrowDropDownIcon />}
+                  aria-controls={`panel${index}-content`}
+                  id={`panel${index}-header`}
+                >
+                  <div>
+                    <p>
+                      <strong>Highlighted Data:</strong>{" "}
+                      {Object.entries(item)
+                        .filter(([key, value]) =>
+                          `${key}${value}`.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .map(([key, value]) => (
+                          <span key={key}>
+                            <strong>{highlightText(key)}:</strong>{" "}
+                            {highlightText(value.toString())},&nbsp;
+                          </span>
+                        ))}
+                    </p>
+                  </div>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>{renderObject(item)}</div>
+                </AccordionDetails>
+              </Accordion>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default SearchData;
