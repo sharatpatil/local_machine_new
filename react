@@ -487,3 +487,6 @@ const HighlightedCard = ({ data, searchTerm }) => {
 };
 
 export default HighlightedCard;
+
+
+Cannot read properties of undefined (reading 'toLowerCase')
