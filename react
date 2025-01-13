@@ -1,0 +1,73 @@
+import "./SearchData.scss";
+import { useState } from "react";
+import Chip from '@mui/material/Chip';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import SimpleDialog from "../Dialog/SimpleDialog";
+
+
+function SearchData({ data }) {
+
+  const [open, setOpen] = useState(false);
+  const [dialogData, setDialogData] = useState('');
+
+  const handleClickOpen = (dialogData) => {
+
+    if (open === true) {
+      setOpen(false);
+      setDialogData('');
+    } else {
+      setOpen(true);
+      setDialogData(dialogData);
+    }
+  };
+
+  // const retreivedResults = Array.from(data);
+  let count = 0;
+  // let userElements = retreivedResults.map(val => {
+  //   count++;
+  //   return <div variant="outlined" ><Accordion><AccordionSummary expandIcon={<ArrowDropDownIcon />} aria-controls="panel1-content" id="panel1-header"><div class="card"><span><strong class="doc">BPSI Key : {val.bpsiKey}</strong><span>&emsp;<Chip label={val.hitCategory[0]} color="primary" variant="outlined" /></span><span class="modified">Last Modified on {val.lastModified}</span></span><text class="uuid">BPSI UUID: {val.bpsiUUID} | Schema Name: {val.schemaName}</text></div> </AccordionSummary><AccordionDetails><text class="uuid" onClick={() => handleClickOpen(val.resultKeyword)}><strong> Search Hits : </strong> <strong class="result"> {val.resultKeyword} </strong></text><br></br><text class="uuid"><strong> dataLocationURI </strong> : {val.dataLocationURI}</text></AccordionDetails></Accordion></div>;
+  // });
+
+
+  
+const renderObject = (obj) => {
+  return (
+    <ul>
+      {Object.entries(obj).map(([key, value]) => (
+        <li key={key}>
+          <strong>{key}:</strong>{" "}
+          {typeof value === "object" && value !== null ? renderObject(value) : value}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+
+  return (
+    <div>
+      {/* <div><SimpleDialog values={dialogData} open={open}></SimpleDialog></div> */}
+      <div>
+        <text class="uuid">Showing {data ? data.length : count} results </text>
+        <hr />
+      </div>
+      <div>
+        {/* {
+          userElements
+        } */}
+
+{data.map((item, index) => (
+        <div key={index}>
+          <h2>Item {index + 1}</h2>
+          {renderObject(item)}
+        </div>
+      ))}
+      </div>
+    </div>
+  );
+
+}
+export default SearchData;
