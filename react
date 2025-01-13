@@ -343,3 +343,7 @@ const App = () => {
 
 export default App;
 
+Cannot read properties of null (reading 'toString')
+text.split is not a function
+TypeError: text.split is not a function
+
