@@ -363,3 +363,127 @@ const highlightText = (text) => {
     )
   );
 };
+
+
+import React, { useState } from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+
+const HighlightedCard = ({ data, searchTerm }) => {
+  const [expandedKeys, setExpandedKeys] = useState({});
+
+  const toggleExpand = (key) => {
+    setExpandedKeys((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const highlightText = (text) => {
+    if (!searchTerm || typeof text !== "string") return text;
+    const regex = new RegExp(`(${searchTerm})`, "gi");
+    const parts = text.split(regex);
+    return parts.map((part, index) =>
+      part.toLowerCase() === searchTerm.toLowerCase() ? (
+        <span key={index} style={{ backgroundColor: "yellow", fontWeight: "bold" }}>
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const getHighlightedData = (obj) => {
+    const result = [];
+    Object.entries(obj).forEach(([key, value]) => {
+      if (typeof value === "object" && value !== null) {
+        result.push(...getHighlightedData(value));
+      } else if (
+        (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
+        searchTerm
+      ) {
+        result.push({ key, value });
+      }
+    });
+    return result;
+  };
+
+  const renderObject = (obj, parentKey = "") => {
+    return Object.entries(obj).map(([key, value]) => {
+      const currentKey = parentKey ? `${parentKey}.${key}` : key;
+
+      return (
+        <div key={currentKey} style={{ marginLeft: 20 }}>
+          <button
+            onClick={() => toggleExpand(currentKey)}
+            style={{
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+              color: "blue",
+              fontWeight: "bold",
+            }}
+          >
+            {typeof value === "object" && value !== null
+              ? expandedKeys[currentKey]
+                ? "-"
+                : "+"
+              : ""}
+          </button>
+          <strong>{highlightText(key)}:</strong>{" "}
+          {typeof value === "object" && value !== null ? (
+            expandedKeys[currentKey] ? renderObject(value, currentKey) : null
+          ) : (
+            <span>{highlightText(value?.toString())}</span>
+          )}
+        </div>
+      );
+    });
+  };
+
+  return (
+    <div>
+      {data.map((item, index) => {
+        const highlightedData = getHighlightedData(item);
+
+        return (
+          <Card key={index} variant="outlined" style={{ marginBottom: 20 }}>
+            <CardContent>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ArrowDropDownIcon />}
+                  aria-controls={`panel${index}-content`}
+                  id={`panel${index}-header`}
+                >
+                  <div>
+                    <p>
+                      <strong>Highlighted Data:</strong>{" "}
+                      {highlightedData.length > 0 ? (
+                        highlightedData.map(({ key, value }, i) => (
+                          <span key={i}>
+                            <strong>{highlightText(key)}:</strong>{" "}
+                            {highlightText(value?.toString())},&nbsp;
+                          </span>
+                        ))
+                      ) : (
+                        <span>No matches found</span>
+                      )}
+                    </p>
+                  </div>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>{renderObject(item)}</div>
+                </AccordionDetails>
+              </Accordion>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+};
+
+export default HighlightedCard;
