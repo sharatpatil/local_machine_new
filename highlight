@@ -347,3 +347,5 @@ const HighlightedCard = ({ data, searchTerm }) => {
 };
 
 export default HighlightedCard;
+
+Line 98:51:  React Hook "useState" cannot be called inside a callback. React Hooks must be called in a React function component or a custom React Hook function  react-hooks/rules-of-hooks
