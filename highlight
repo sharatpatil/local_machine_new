@@ -334,3 +334,10 @@ const HighlightedCard = ({ data, searchTerm }) => {
 };
 
 export default HighlightedCard;
+
+
+
+ERROR in ./node_modules/@popperjs/core/lib/createPopper.js 1:0-63
+Module not found: Error: Can't resolve './dom-utils/getCompositeRect.js' in 'C:\Users\2024698\bpsi-app-projects\react\51437-bpsi-search-ui\node_modules\@popperjs\core\lib'
+
+
