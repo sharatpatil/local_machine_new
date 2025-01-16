@@ -6,163 +6,8 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
-
-const HighlightedCardItem = ({ item, searchTerm }) => {
-  const [expandedNodes, setExpandedNodes] = useState({});
-
-  const toggleExpand = (key) => {
-    setExpandedNodes((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const highlightText = (text) => {
-    if (!searchTerm || typeof text !== "string") return text;
-
-    const regex = new RegExp(`(${searchTerm})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <span
-          key={index}
-          style={{
-            backgroundColor: "#ffe58a",
-            fontWeight: "bold",
-            color: "#d32f2f",
-            padding: "2px 4px",
-            borderRadius: "4px",
-          }}
-        >
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  const renderJSON = (obj, parentKey = "") => {
-    return Object.entries(obj).map(([key, value]) => {
-      const currentKey = `${parentKey}.${key}`;
-      const isExpandable = typeof value === "object" && value !== null;
-
-      return (
-        <div key={currentKey} style={{ marginLeft: "20px", marginBottom: "5px" }}>
-          <Box display="flex" alignItems="center">
-            {isExpandable ? (
-              <Box
-                onClick={() => toggleExpand(currentKey)}
-                style={{ cursor: "pointer", marginRight: "5px" }}
-              >
-                {expandedNodes[currentKey] ? (
-                  <RemoveCircleRoundedIcon sx={{ color: "red" }} />
-                ) : (
-                  <AddCircleRoundedIcon sx={{ color: "#00008B" }} />
-                )}
-              </Box>
-            ) : (
-              <Box style={{ width: "24px" }} />
-            )}
-            <Typography
-              variant="body2"
-              component="span"
-              style={{ fontWeight: "bold", color: "#3f51b5", fontSize:12 }}
-            >
-              {highlightText(key)}:
-            </Typography>{" "}
-            {!isExpandable && (
-              <Typography variant="body2" component="span" style={{fontSize:12}}>
-                {highlightText(value?.toString())}
-              </Typography>
-            )}
-          </Box>
-          {isExpandable && expandedNodes[currentKey] && (
-            <div style={{ marginLeft: "20px" }}>{renderJSON(value, currentKey)}</div>
-          )}
-        </div>
-      );
-    });
-  };
-
-  const getHighlightedData = (obj) => {
-    const result = [];
-    Object.entries(obj).forEach(([key, value]) => {
-      if (typeof value === "object" && value !== null) {
-        result.push(...getHighlightedData(value));
-      } else if (
-        (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
-        searchTerm
-      ) {
-        result.push({ key, value });
-      }
-    });
-    return result;
-  };
-
-  const highlightedData = getHighlightedData(item);
-
-  return (
-    <Card
-      variant="outlined"
-      style={{
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-        borderRadius: "10px",
-      }}
-    >
-      <CardContent
-        style={{
-          backgroundColor: "#f9f9f9",
-          padding: "20px",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-        <Box style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-          <Typography variant="h10" style={{ color: "#333", fontSize:14 }}>
-            {highlightedData.length > 0 ? (
-              highlightedData.map(({ key, value }, i) => (
-                <span key={i}>
-                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}
-                </span>
-              ))
-            ) : (
-              <span>No matches found</span>
-            )}
-          </Typography>
-        </Box>
-      </CardContent>
-      <CardContent style={{ backgroundColor: "#ffffff", padding: "20px" }}>
-        <div>{renderJSON(item)}</div>
-      </CardContent>
-    </Card>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <div style={{ padding: "20px" }}>
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </div>
-  );
-};
-
-export default HighlightedCard;
-
-
-import React, { useState } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Button, Modal, TextField } from "@mui/material";
 
 const HighlightedCardItem = ({ item, searchTerm }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -258,67 +103,88 @@ const HighlightedCardItem = ({ item, searchTerm }) => {
           backgroundColor: "#f9f9f9",
           padding: "20px",
           borderBottom: "1px solid #ddd",
+
         }}
       >
-        <Box style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-          <Typography variant="h10" style={{ color: "#333", fontSize: 14 }}>
+
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center", // Vertically align items
+            justifyContent: "space-between", // Text on the left, button on the right
+            padding: "10px 0", // Add vertical spacing around the row
+          }}
+        >
+          <Typography
+            variant="h10"
+            style={{
+              color: "#333",
+              fontSize: 14,
+            }}
+          >
             {highlightedData.length > 0 ? (
               highlightedData.map(({ key, value }, i) => (
                 <span key={i}>
-                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}
+                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}{" "}
+                  <span>&nbsp;&nbsp;</span>
                 </span>
               ))
             ) : (
               <span>No matches found</span>
             )}
           </Typography>
-        </Box>
-      </CardContent>
-      <CardContent style={{ backgroundColor: "#ffffff", padding: "20px" }}>
-        <Button
-          variant="outlined"
-          style={{ color: "#3f51b5" }}
-          onClick={() => setModalOpen(true)}
-        >
-          View JSON
-        </Button>
-        <Modal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          aria-labelledby="json-modal"
-          aria-describedby="json-modal-description"
-        >
+
+        
           <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 600,
-              bgcolor: "background.paper",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
-              borderRadius: "10px",
-              maxHeight: "80%",
-              overflowY: "auto",
-            }}
+            onClick={() => setModalOpen(true)}
+            style={{ cursor: "pointer", marginRight: "5px" }}
           >
-            <Typography id="json-modal" variant="h6" component="h2" gutterBottom>
-              JSON Viewer
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              label="Filter JSON"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-              style={{ marginBottom: "20px" }}
-            />
-            <div>{renderJSON(item)}</div>
+            
+              <VisibilityIcon sx={{ color: "grey" }} />
+           
           </Box>
-        </Modal>
+        </Box>
+
       </CardContent>
+
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="json-modal"
+        aria-describedby="json-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "10px",
+            maxHeight: "80%",
+            overflowY: "auto",
+          }}
+        >
+          <Typography id="json-modal" variant="h6" component="h2" gutterBottom>
+            JSON Viewer
+          </Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            label="Filter JSON"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            style={{ marginBottom: "20px" }}
+          />
+          <div>{renderJSON(item)}</div>
+        </Box>
+      </Modal>
+
     </Card>
   );
 };
@@ -336,485 +202,3 @@ const HighlightedCard = ({ data, searchTerm }) => {
 export default HighlightedCard;
 
 
-
-ERROR in ./node_modules/@popperjs/core/lib/createPopper.js 1:0-63
-Module not found: Error: Can't resolve './dom-utils/getCompositeRect.js' in 'C:\Users\2024698\bpsi-app-projects\react\51437-bpsi-search-ui\node_modules\@popperjs\core\lib'
-
-
-import React, { useState } from "react";
-import "./HighlightedCard.css"; // Create a separate CSS file for styling
-
-const HighlightedCardItem = ({ item, searchTerm }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [filterText, setFilterText] = useState("");
-
-  const highlightText = (text) => {
-    if (!searchTerm || typeof text !== "string") return text;
-
-    const regex = new RegExp(`(${searchTerm})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <span
-          key={index}
-          style={{
-            backgroundColor: "#ffe58a",
-            fontWeight: "bold",
-            color: "#d32f2f",
-            padding: "2px 4px",
-            borderRadius: "4px",
-          }}
-        >
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  const renderJSON = (obj, parentKey = "") => {
-    return Object.entries(obj).map(([key, value]) => {
-      const isExpandable = typeof value === "object" && value !== null;
-      const matchesFilter =
-        key.toLowerCase().includes(filterText.toLowerCase()) ||
-        (!isExpandable &&
-          value?.toString().toLowerCase().includes(filterText.toLowerCase()));
-
-      if (!matchesFilter) return null;
-
-      return (
-        <div key={`${parentKey}.${key}`} style={{ marginLeft: "20px", marginBottom: "5px" }}>
-          <strong>{highlightText(key)}:</strong>{" "}
-          {isExpandable ? (
-            <div>{renderJSON(value, `${parentKey}.${key}`)}</div>
-          ) : (
-            <span>{highlightText(value?.toString())}</span>
-          )}
-        </div>
-      );
-    });
-  };
-
-  const getHighlightedData = (obj) => {
-    const result = [];
-    Object.entries(obj).forEach(([key, value]) => {
-      if (typeof value === "object" && value !== null) {
-        result.push(...getHighlightedData(value));
-      } else if (
-        (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
-        searchTerm
-      ) {
-        result.push({ key, value });
-      }
-    });
-    return result;
-  };
-
-  const highlightedData = getHighlightedData(item);
-
-  return (
-    <div className="card">
-      <div className="card-content">
-        {highlightedData.length > 0 ? (
-          highlightedData.map(({ key, value }, i) => (
-            <span key={i}>
-              <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}
-            </span>
-          ))
-        ) : (
-          <span>No matches found</span>
-        )}
-      </div>
-      <button className="view-json-button" onClick={() => setModalOpen(true)}>
-        View JSON
-      </button>
-
-      {modalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-button" onClick={() => setModalOpen(false)}>
-              Close
-            </button>
-            <input
-              type="text"
-              placeholder="Filter JSON"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-              className="filter-input"
-            />
-            <div className="json-content">{renderJSON(item)}</div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <div className="card-container">
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </div>
-  );
-};
-
-export default HighlightedCard;
-
-.card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  padding: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.card-content {
-  margin-bottom: 20px;
-}
-
-.view-json-button {
-  background-color: #3f51b5;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  width: 600px;
-  max-height: 80%;
-  overflow-y: auto;
-  position: relative;
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: red;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.filter-input {
-  margin-bottom: 20px;
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.json-content {
-  font-family: monospace;
-  font-size: 14px;
-}
-
-
-
-
-
- <Box style={{ display: "flex", flexWrap: "wrap", gap: "10px",  }}>
-          <Typography variant="h10" style={{ color: "#333", fontSize: 14 }}>
-            {highlightedData.length > 0 ? (
-              highlightedData.map(({ key, value }, i) => (
-                <span key={i}>
-                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())} <span>&nbsp;&nbsp;</span>
-                  
-                </span>
-              ))
-            ) : (
-              <span>No matches found</span>
-            )}
-          </Typography>
-
-          <Button
-          variant="outlined"
-          style={{ color: "#3f51b5" }}
-          onClick={() => setModalOpen(true)}
-        >
-          View JSON
-        </Button>
-        </Box>
-
-<Box
-  style={{
-    display: "flex",
-    alignItems: "center", // Align items vertically in the center
-    justifyContent: "space-between", // Space around the text and button
-    gap: "10px", // Space between items
-    padding: "10px 0", // Add vertical padding for spacing
-    flexWrap: "wrap", // Allow wrapping for smaller screens
-  }}
->
-  <Typography
-    variant="h10"
-    style={{
-      color: "#333",
-      fontSize: 14,
-      flex: 1, // Ensures the text takes up available space
-      marginRight: "10px", // Add space between text and button on large screens
-    }}
-  >
-    {highlightedData.length > 0 ? (
-      highlightedData.map(({ key, value }, i) => (
-        <span key={i}>
-          <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}{" "}
-          <span>&nbsp;&nbsp;</span>
-        </span>
-      ))
-    ) : (
-      <span>No matches found</span>
-    )}
-  </Typography>
-
-  <Button
-    variant="outlined"
-    style={{
-      color: "#3f51b5",
-      height: "fit-content", // Adjust button height to align with text
-    }}
-    onClick={() => setModalOpen(true)}
-  >
-    View JSON
-  </Button>
-</Box>
-
-
-<Box
-  style={{
-    display: "flex",
-    alignItems: "center", // Vertically align items
-    justifyContent: "space-between", // Text on the left, button on the right
-    padding: "10px 0", // Add vertical spacing around the row
-  }}
->
-  <Typography
-    variant="h10"
-    style={{
-      color: "#333",
-      fontSize: 14,
-    }}
-  >
-    {highlightedData.length > 0 ? (
-      highlightedData.map(({ key, value }, i) => (
-        <span key={i}>
-          <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}{" "}
-          <span>&nbsp;&nbsp;</span>
-        </span>
-      ))
-    ) : (
-      <span>No matches found</span>
-    )}
-  </Typography>
-
-  <Button
-    variant="outlined"
-    style={{
-      color: "#3f51b5",
-      height: "fit-content", // Align button with text
-    }}
-    onClick={() => setModalOpen(true)}
-  >
-    View JSON
-  </Button>
-</Box>
-
-
-import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Modal,
-  TextField,
-} from "@mui/material";
-import TreeView from "@mui/lab/TreeView";
-import TreeItem from "@mui/lab/TreeItem";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-
-const HighlightedCardItem = ({ item, searchTerm }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [filterTerm, setFilterTerm] = useState("");
-
-  const highlightText = (text) => {
-    if (!searchTerm || typeof text !== "string") return text;
-
-    const regex = new RegExp(`(${searchTerm})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <span
-          key={index}
-          style={{
-            backgroundColor: "#ffe58a",
-            fontWeight: "bold",
-            color: "#d32f2f",
-            padding: "2px 4px",
-            borderRadius: "4px",
-          }}
-        >
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  // Recursive function to render TreeView nodes
-  const renderTree = (data, parentKey = "") => {
-    return Object.entries(data)
-      .filter(([key]) => key.toLowerCase().includes(filterTerm.toLowerCase())) // Filter logic
-      .map(([key, value]) => {
-        const nodeId = `${parentKey}.${key}`;
-        return (
-          <TreeItem
-            key={nodeId}
-            nodeId={nodeId}
-            label={
-              <span>
-                <strong>{highlightText(key)}:</strong>{" "}
-                {typeof value !== "object" ? highlightText(value?.toString()) : ""}
-              </span>
-            }
-          >
-            {typeof value === "object" && value !== null && renderTree(value, nodeId)}
-          </TreeItem>
-        );
-      });
-  };
-
-  return (
-    <Box>
-      <Box
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "10px 0",
-        }}
-      >
-        <Typography
-          variant="h10"
-          style={{
-            color: "#333",
-            fontSize: 14,
-          }}
-        >
-          {searchTerm ? (
-            <span>
-              <strong>Search Results:</strong> {highlightText(searchTerm)}
-            </span>
-          ) : (
-            "JSON Data"
-          )}
-        </Typography>
-
-        <Button
-          variant="outlined"
-          style={{
-            color: "#3f51b5",
-          }}
-          onClick={() => setModalOpen(true)}
-        >
-          View JSON
-        </Button>
-      </Box>
-
-      {/* Modal for JSON TreeView */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <Box
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "80%",
-            maxHeight: "80%",
-            backgroundColor: "#fff",
-            border: "1px solid #ddd",
-            borderRadius: "10px",
-            boxShadow: 24,
-            padding: "20px",
-            overflow: "auto",
-          }}
-        >
-          <Typography
-            variant="h6"
-            style={{ marginBottom: "20px", textAlign: "center", color: "#333" }}
-          >
-            JSON Data Viewer
-          </Typography>
-
-          {/* Filter Input */}
-          <TextField
-            variant="outlined"
-            size="small"
-            fullWidth
-            placeholder="Filter keys..."
-            value={filterTerm}
-            onChange={(e) => setFilterTerm(e.target.value)}
-            style={{ marginBottom: "20px" }}
-          />
-
-          {/* JSON TreeView */}
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            style={{ maxHeight: "70vh", overflow: "auto" }}
-          >
-            {renderTree(item)}
-          </TreeView>
-
-          {/* Close Button */}
-          <Box textAlign="center" style={{ marginTop: "20px" }}>
-            <Button
-              variant="contained"
-              onClick={() => setModalOpen(false)}
-              style={{ backgroundColor: "#3f51b5", color: "#fff" }}
-            >
-              Close
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
-    </Box>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <div style={{ padding: "20px" }}>
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </div>
-  );
-};
-
-export default HighlightedCard;
