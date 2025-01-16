@@ -1031,3 +1031,14 @@ const HighlightedCard = ({ data, searchTerm }) => {
 
 export default HighlightedCard;
 
+
+MUI X: The Tree View component requires all items to have a unique `id` property.
+Alternatively, you can use the `getItemId` prop to specify a custom id for each item.
+Two items were provided with the same id in the `items` prop: "undefined"
+Error: MUI X: The Tree View component requires all items to have a unique `id` property.
+Alternatively, you can use the `getItemId` prop to specify a custom id for each item.
+Two items were provided with the same id in the `items` prop: "undefined"
+    at http://localhost:3001/static/js/bundle.js:37917:15
+
+
+
