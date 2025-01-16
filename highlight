@@ -850,4 +850,184 @@ const HighlightedCard = ({ data, searchTerm }) => {
 export default HighlightedCard;
 
 
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  TextField,
+  Modal,
+  IconButton,
+} from "@mui/material";
+import { TreeView, TreeItem } from "@mui/lab";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+const HighlightedCardItem = ({ item, searchTerm }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [filterText, setFilterText] = useState("");
+
+  // Recursive function to render tree items
+  const renderTreeItems = (data, parentKey = "") => {
+    if (data === null || data === undefined) return null;
+
+    return Object.entries(data).map(([key, value]) => {
+      const nodeId = `${parentKey}-${key}`;
+      const isExpandable = typeof value === "object" && value !== null;
+
+      // Check if the key or value matches the filter
+      const matchesFilter =
+        key.toLowerCase().includes(filterText.toLowerCase()) ||
+        (typeof value === "string" &&
+          value.toLowerCase().includes(filterText.toLowerCase()));
+
+      // Skip items that don't match the filter
+      if (filterText && !matchesFilter) return null;
+
+      return (
+        <TreeItem
+          key={nodeId}
+          nodeId={nodeId}
+          label={
+            <span>
+              <strong>{key}:</strong> {isExpandable ? null : value?.toString()}
+            </span>
+          }
+        >
+          {isExpandable && renderTreeItems(value, nodeId)}
+        </TreeItem>
+      );
+    });
+  };
+
+  // Extract highlighted data for summary view
+  const getHighlightedData = (obj) => {
+    const result = [];
+    if (typeof obj === "object" && obj !== null) {
+      Object.entries(obj).forEach(([key, value]) => {
+        if (typeof value === "object" && value !== null) {
+          result.push(...getHighlightedData(value));
+        } else if (
+          (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
+          searchTerm
+        ) {
+          result.push({ key, value });
+        }
+      });
+    }
+    return result;
+  };
+
+  const highlightedData = getHighlightedData(item);
+
+  return (
+    <Card
+      variant="outlined"
+      sx={{
+        marginBottom: "20px",
+        border: "1px solid #ddd",
+        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+        borderRadius: "10px",
+      }}
+    >
+      <CardContent
+        sx={{
+          backgroundColor: "#f9f9f9",
+          padding: "20px",
+          borderBottom: "1px solid #ddd",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="body1" sx={{ fontSize: "14px" }}>
+            {highlightedData.length > 0 ? (
+              highlightedData.map(({ key, value }, i) => (
+                <span key={i}>
+                  <strong>{key}:</strong> {value?.toString()}{" "}
+                </span>
+              ))
+            ) : (
+              <span>No matches found</span>
+            )}
+          </Typography>
+
+          <IconButton onClick={() => setModalOpen(true)}>
+            <VisibilityIcon sx={{ color: "grey" }} />
+          </IconButton>
+        </Box>
+      </CardContent>
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="json-modal"
+        aria-describedby="json-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "600px",
+            bgcolor: "background.paper",
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            boxShadow: 24,
+            p: 4,
+            maxHeight: "80%",
+            overflowY: "auto",
+          }}
+        >
+          <Typography
+            id="json-modal"
+            variant="h6"
+            component="h2"
+            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
+          >
+            JSON Viewer
+          </Typography>
+
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
+            label="Filter JSON"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            sx={{ marginBottom: "20px" }}
+          />
+
+          <TreeView
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpandIcon={<ChevronRightIcon />}
+            sx={{ flexGrow: 1, overflowY: "auto" }}
+          >
+            {renderTreeItems(item)}
+          </TreeView>
+        </Box>
+      </Modal>
+    </Card>
+  );
+};
+
+const HighlightedCard = ({ data, searchTerm }) => {
+  return (
+    <Box sx={{ padding: "20px" }}>
+      {data.map((item, index) => (
+        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
+      ))}
+    </Box>
+  );
+};
+
+export default HighlightedCard;
 
