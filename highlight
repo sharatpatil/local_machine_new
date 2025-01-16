@@ -202,3 +202,216 @@ const HighlightedCard = ({ data, searchTerm }) => {
 export default HighlightedCard;
 
 
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  TextField,
+  Modal,
+  IconButton,
+} from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+const HighlightedCardItem = ({ item, searchTerm }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [filterText, setFilterText] = useState("");
+
+  const highlightText = (text) => {
+    if (!searchTerm || typeof text !== "string") return text;
+
+    const regex = new RegExp(`(${searchTerm})`, "gi");
+    const parts = text.split(regex);
+
+    return parts.map((part, index) =>
+      part.toLowerCase() === searchTerm.toLowerCase() ? (
+        <span
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            fontWeight: "bold",
+            color: "#d32f2f",
+            padding: "2px 4px",
+            borderRadius: "4px",
+          }}
+        >
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const renderFilteredJSON = (obj) => {
+    return Object.entries(obj)
+      .filter(
+        ([key, value]) =>
+          key.toLowerCase().includes(filterText.toLowerCase()) ||
+          (typeof value === "string" &&
+            value.toLowerCase().includes(filterText.toLowerCase()))
+      )
+      .map(([key, value]) => (
+        <Box key={key} sx={{ marginBottom: "10px", marginLeft: "10px" }}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: "bold",
+              color: "#3f51b5",
+              fontSize: 14,
+              wordBreak: "break-word",
+            }}
+          >
+            {key}:
+          </Typography>
+          {typeof value === "object" ? (
+            <Box sx={{ marginLeft: "10px" }}>{renderFilteredJSON(value)}</Box>
+          ) : (
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: 14,
+                color: "#333",
+                wordBreak: "break-word",
+              }}
+            >
+              {value}
+            </Typography>
+          )}
+        </Box>
+      ));
+  };
+
+  const getHighlightedData = (obj) => {
+    const result = [];
+    Object.entries(obj).forEach(([key, value]) => {
+      if (typeof value === "object" && value !== null) {
+        result.push(...getHighlightedData(value));
+      } else if (
+        (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
+        searchTerm
+      ) {
+        result.push({ key, value });
+      }
+    });
+    return result;
+  };
+
+  const highlightedData = getHighlightedData(item);
+
+  return (
+    <Card
+      variant="outlined"
+      sx={{
+        marginBottom: "20px",
+        border: "1px solid #ddd",
+        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+        borderRadius: "10px",
+      }}
+    >
+      <CardContent
+        sx={{
+          backgroundColor: "#f9f9f9",
+          padding: "20px",
+          borderBottom: "1px solid #ddd",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "10px 0",
+          }}
+        >
+          <Typography variant="body1" sx={{ color: "#333", fontSize: 14 }}>
+            {highlightedData.length > 0 ? (
+              highlightedData.map(({ key, value }, i) => (
+                <span key={i}>
+                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}{" "}
+                </span>
+              ))
+            ) : (
+              <span>No matches found</span>
+            )}
+          </Typography>
+
+          <IconButton onClick={() => setModalOpen(true)}>
+            <VisibilityIcon sx={{ color: "grey" }} />
+          </IconButton>
+        </Box>
+      </CardContent>
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="json-modal"
+        aria-describedby="json-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "600px",
+            bgcolor: "background.paper",
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            boxShadow: 24,
+            p: 4,
+            maxHeight: "80%",
+            overflowY: "auto",
+          }}
+        >
+          <Typography
+            id="json-modal"
+            variant="h6"
+            component="h2"
+            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
+          >
+            JSON Viewer
+          </Typography>
+
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
+            label="Filter JSON"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            sx={{
+              marginBottom: "20px",
+            }}
+          />
+
+          <Box>{renderFilteredJSON(item)}</Box>
+
+          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+            <Button
+              variant="contained"
+              onClick={() => setModalOpen(false)}
+              sx={{ backgroundColor: "#3f51b5", color: "#fff" }}
+            >
+              Close
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    </Card>
+  );
+};
+
+const HighlightedCard = ({ data, searchTerm }) => {
+  return (
+    <Box sx={{ padding: "20px" }}>
+      {data.map((item, index) => (
+        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
+      ))}
+    </Box>
+  );
+};
+
+export default HighlightedCard;
