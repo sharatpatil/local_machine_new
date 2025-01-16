@@ -648,3 +648,5 @@ const HighlightedCard = ({ data, searchTerm }) => {
 export default HighlightedCard;
 
 
+
+
