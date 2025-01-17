@@ -872,3 +872,35 @@ const highlightText = (text) => {
 };
 
 
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+};
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  const escapedSearchTerm = escapeRegExp(searchTerm); // Escape special characters
+  const regex = new RegExp(`(${escapedSearchTerm})`, "gi"); // Case-insensitive regex
+  const parts = text.split(regex);
+
+  return parts.map((part, index) => {
+    // Highlight the part if it matches the searchTerm
+    if (part.match(regex)) {
+      return (
+        <span
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            fontWeight: "bold",
+          }}
+        >
+          {part}
+        </span>
+      );
+    }
+    // Return non-matching parts as plain text
+    return part;
+  });
+};
+
