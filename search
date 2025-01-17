@@ -843,4 +843,32 @@ const highlightText = (text) => {
     );
   };
 
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+};
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  const escapedSearchTerm = escapeRegExp(searchTerm); // Escape special characters
+  const regex = new RegExp(`(${escapedSearchTerm})`, "gi"); // Create a case-insensitive regex
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
 
