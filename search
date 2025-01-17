@@ -816,3 +816,31 @@ export default SearchQuery;
     flex: 3,
   }}
 />
+
+
+
+const highlightText = (text) => {
+    if (!searchTerm || typeof text !== "string") return text;
+
+    const regex = new RegExp(`(${searchTerm})`, "gi");
+    const parts = text.split(regex);
+
+    return parts.map((part, index) =>
+      part.toLowerCase() === searchTerm.toLowerCase() ? (
+        <span
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            fontWeight: "bold",
+        
+          }}
+        >
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+
