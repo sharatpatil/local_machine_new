@@ -1,4 +1,4 @@
-.search {
+hu.search {
 	width: 100%;
 	outline: none;
 	border: none;
@@ -346,3 +346,33 @@ export default SearchQuery;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
+
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the content horizontally */
+  gap: 10px; /* Spacing between dropdown and search bar */
+  width: 80%;
+  margin: 0 auto; /* Centers the container within the parent element horizontally */
+  margin-bottom: 20px; /* Keeps the existing vertical spacing */
+}
+
+.select-dropdown {
+  flex: 3; /* Adjusts size proportionally */
+  height: 68px;
+  padding: 10px 10px 10px 40px;
+  border: none;
+  border-radius: 7px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  appearance: none;
+}
+
+.search-input {
+  flex: 3; /* Adjusts size proportionally */
+  padding: 10px 10px 10px 40px;
+  border: none;
+  border-radius: 7px;
+  height: 50px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
