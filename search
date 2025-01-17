@@ -414,3 +414,18 @@ export default SearchQuery;
       
       }}
     >
+
+
+<Card
+  variant="outlined"
+  style={{
+    marginBottom: "20px",
+    border: "1px solid #ddd",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+    borderRadius: "10px",
+    width: "80%",
+    margin: "0 auto", // Centers the Card horizontally
+  }}
+>
+  {/* Card content goes here */}
+</Card>
