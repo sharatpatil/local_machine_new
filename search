@@ -388,3 +388,14 @@ export default SearchQuery;
     border-bottom: 1;
     border-bottom-width: 1;
   }
+
+
+.show {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centers the content horizontally */
+    margin: 0 auto; /* Centers the container within the parent element horizontally */
+    margin-bottom: 20px; /* Keeps the existing vertical spacing */
+    border-bottom: 1px solid #ccc; /* Adds a thin gray line below */
+}
