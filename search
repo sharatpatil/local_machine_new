@@ -675,3 +675,116 @@ function SearchQuery({ setData, SetTerm }) {
 }
 
 export default SearchQuery;
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the content horizontally */
+  gap: 10px; /* Spacing between dropdown and search bar */
+  width: 80%;
+  margin: 0 auto; /* Centers the container within the parent element horizontally */
+  margin-bottom: 20px; /* Keeps the existing vertical spacing */
+}
+
+.search-input {
+  flex: 3; /* Adjusts size proportionally */
+  padding: 0px 10px; /* Added padding for better spacing */
+  border: none;
+  border-radius: 7px;
+  height: 48px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.autocomplete-dropdown {
+  flex: 3; /* Adjusts size proportionally */
+  height: 48px;
+  border-radius: 7px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+
+
+
+
+import { useState } from "react";
+import { getDataAPI } from "../../services/httpServices";
+import SearchBar from "material-ui-search-bar";
+import "./SearchQuery.scss";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+
+function SearchQuery({ setData, SetTerm }) {
+  const [query, setQuery] = useState("");
+  const [selectedSchema, setSelectedSchema] = useState(null); // For schema selection
+  const [loading, setLoading] = useState(false);
+
+  const schemaOptions = [
+    { label: "Option One", value: "option1" },
+    { label: "Option Two", value: "option2" },
+    { label: "Another Schema Option", value: "option3" },
+  ]; // Example schema options
+
+  function getData() {
+    if (!selectedSchema) {
+      alert("Please select a schema before searching.");
+      return;
+    }
+    setLoading(true);
+    SetTerm(query);
+    getDataAPI(query).then((data) => {
+      console.log(data);
+      setData(data.data);
+      setLoading(false);
+    });
+  }
+
+  return (
+    <div className="line">
+      <div className="search-container">
+        {/* Autocomplete Dropdown */}
+        <Autocomplete
+          options={schemaOptions}
+          getOptionLabel={(option) => option.label}
+          value={selectedSchema}
+          onChange={(event, newValue) => setSelectedSchema(newValue)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder="Search and select schema"
+              variant="outlined"
+              style={{
+                height: "48px", // Set dropdown height
+                borderRadius: "7px",
+              }}
+            />
+          )}
+          className="autocomplete-dropdown"
+          style={{
+            flex: 3,
+          }}
+        />
+
+        {/* Search Bar */}
+        <SearchBar
+          className="search-input"
+          value={query}
+          onChange={(e) => setQuery(e)}
+          onRequestSearch={() => getData()}
+          placeholder="Want to search something?"
+        />
+      </div>
+
+      {/* Loading Indicator */}
+      {loading && (
+        <Box sx={{ width: "100%", marginTop: "10px" }}>
+          <LinearProgress />
+        </Box>
+      )}
+    </div>
+  );
+}
+
+export default SearchQuery;
