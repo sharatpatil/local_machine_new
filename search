@@ -70,3 +70,115 @@ function SearchQuery({setData,SetTerm}) {
     );
 }
 export default SearchQuery;
+
+
+
+.search-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 7px;
+  height: 50px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #888;
+  pointer-events: none;
+}
+
+.select-dropdown {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 7px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  appearance: none;
+}
+
+
+
+
+
+import { useState } from "react";
+import { getDataAPI } from "../../services/httpServices";
+import SearchBar from "material-ui-search-bar";
+import "./SearchQuery.scss";
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
+
+function SearchQuery({ setData, SetTerm }) {
+  const [query, setQuery] = useState("");
+  const [selectedSchema, setSelectedSchema] = useState(""); // For schema selection
+  const [loading, setLoading] = useState(false);
+
+  const schemaOptions = [
+    { label: "Schema 1", value: "schema1" },
+    { label: "Schema 2", value: "schema2" },
+    { label: "Schema 3", value: "schema3" },
+  ]; // Example schema options
+
+  function getData() {
+    if (!selectedSchema) {
+      alert("Please select a schema before searching.");
+      return;
+    }
+    setLoading(true);
+    SetTerm({ query, schema: selectedSchema });
+    getDataAPI({ query, schema: selectedSchema }).then((data) => {
+      console.log(data);
+      setData(data.data);
+      setLoading(false);
+    });
+  }
+
+  return (
+    <div className="search-container">
+      {/* Schema Dropdown */}
+      <select
+        className="select-dropdown"
+        value={selectedSchema}
+        onChange={(e) => setSelectedSchema(e.target.value)}
+      >
+        <option value="">Select Schema</option>
+        {schemaOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+      {/* Search Bar */}
+      <SearchBar
+        className="search-input"
+        value={query}
+        onChange={(e) => setQuery(e)}
+        onRequestSearch={() => getData()}
+        placeholder="Want to search something?"
+      />
+
+      {/* Loading Indicator */}
+      {loading && (
+        <Box sx={{ width: "100%" }}>
+          <LinearProgress />
+        </Box>
+      )}
+    </div>
+  );
+}
+
+export default SearchQuery;
