@@ -281,3 +281,36 @@ function SearchQuery({ setData, SetTerm }) {
 }
 
 export default SearchQuery;
+
+
+
+.search-container {
+	display: flex;
+	align-items: center;
+	align-content: center;
+	gap: 10px; /* Spacing between dropdown and search bar */
+	width: 80%;
+	margin-bottom: 20px;
+  }
+  
+  .select-dropdown {
+	flex: 3; /* Adjusts size proportionally */
+	height: 68px;
+	padding: 10px 10px 10px 40px;
+	border: none;
+	border-radius: 7px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
+	appearance: none;
+  }
+  
+  .search-input {
+	flex: 3; /* Adjusts size proportionally */
+	padding: 10px 10px 10px 40px;
+	border: none;
+	border-radius: 7px;
+	height: 50px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  }
+
+
