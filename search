@@ -314,3 +314,35 @@ export default SearchQuery;
   }
 
 
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers horizontally */
+  gap: 10px; /* Spacing between dropdown and search bar */
+  width: 80%;
+  margin: 0 auto; /* Centers horizontally within the parent container */
+  position: absolute; /* Enables centering on the viewport */
+  top: 50%; /* Vertically centers */
+  left: 50%; /* Horizontally centers */
+  transform: translate(-50%, -50%); /* Adjusts position to the center */
+}
+
+.select-dropdown {
+  flex: 3; /* Adjusts size proportionally */
+  height: 68px;
+  padding: 10px 10px 10px 40px;
+  border: none;
+  border-radius: 7px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  appearance: none;
+}
+
+.search-input {
+  flex: 3; /* Adjusts size proportionally */
+  padding: 10px 10px 10px 40px;
+  border: none;
+  border-radius: 7px;
+  height: 50px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
