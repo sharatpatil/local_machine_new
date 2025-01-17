@@ -399,3 +399,18 @@ export default SearchQuery;
     margin-bottom: 20px; /* Keeps the existing vertical spacing */
     border-bottom: 1px solid #ccc; /* Adds a thin gray line below */
 }
+
+
+
+<Card
+      variant="outlined"
+      style={{
+        marginBottom: "20px",
+        border: "1px solid #ddd",
+        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+        borderRadius: "10px",
+        width:'80%',
+        
+      
+      }}
+    >
