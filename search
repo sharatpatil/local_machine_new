@@ -788,3 +788,31 @@ function SearchQuery({ setData, SetTerm }) {
 }
 
 export default SearchQuery;
+
+
+<Autocomplete
+  options={schemaOptions}
+  getOptionLabel={(option) => option.label}
+  value={selectedSchema}
+  onChange={(event, newValue) => setSelectedSchema(newValue)}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      placeholder="Search and select schema"
+      variant="outlined"
+      style={{
+        height: "48px",
+        borderRadius: "7px",
+      }}
+    />
+  )}
+  className="autocomplete-dropdown"
+  sx={{
+    ".MuiOutlinedInput-root": {
+      padding: 0, // Remove padding
+    },
+  }}
+  style={{
+    flex: 3,
+  }}
+/>
