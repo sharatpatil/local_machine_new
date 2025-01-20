@@ -1,5 +1,93 @@
+const getHighlightedData = (obj) => {
+  const result = [];
+  const searchWords = searchTerm
+    ?.toLowerCase()
+    .trim()
+    .split(/\s+/); // Split search term into individual words
+
+  if (!searchWords || searchWords.length === 0) return result;
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const isNestedObject = typeof value === "object" && value !== null;
+    const keyMatches = searchWords.some((word) =>
+      key.toLowerCase().includes(word)
+    );
+    const valueMatches =
+      typeof value === "string" &&
+      searchWords.some((word) => value.toLowerCase().includes(word));
+
+    if (isNestedObject) {
+      // Recursively get matches for nested objects
+      result.push(...getHighlightedData(value));
+    } else if (keyMatches || valueMatches) {
+      // Push matches to the result
+      result.push({ key, value });
+    }
+  });
+
+  return result;
+};
+
+// Highlighted Data
+const highlightedData = getHighlightedData(item);
+
+
+<Typography
+  variant="h10"
+  style={{
+    color: "#333",
+    fontSize: 14,
+  }}
+>
+  {highlightedData.length > 0 ? (
+    highlightedData.map(({ key, value }, index) => (
+      <span key={index}>
+        <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}
+        <br />
+      </span>
+    ))
+  ) : (
+    <span>No matches found</span>
+  )}
+</Typography>
+
+
+
+
+
 
   const getHighlightedData = (obj) => {
+  const result = [];
+  const searchWords = searchTerm
+    ?.toLowerCase()
+    .trim()
+    .split(/\s+/); // Split search term into individual words
+
+  if (!searchWords || searchWords.length === 0) return result;
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const isNestedObject = typeof value === "object" && value !== null;
+    const keyMatches = searchWords.some((word) =>
+      key.toLowerCase().includes(word)
+    );
+    const valueMatches =
+      typeof value === "string" &&
+      searchWords.some((word) => value.toLowerCase().includes(word));
+
+    if (isNestedObject) {
+      // Recursively get matches for nested objects
+      result.push(...getHighlightedData(value));
+    } else if (keyMatches || valueMatches) {
+      // Push matches to the result
+      result.push({ key, value });
+    }
+  });
+
+  return result;
+};
+
+// Highlighted Data
+const highlightedData = getHighlightedData(item)const getHighlightedData = (obj) => {
     const result = [];
     Object.entries(obj).forEach(([key, value]) => {
       if (typeof value === "object" && value !== null) {
