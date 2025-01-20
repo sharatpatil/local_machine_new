@@ -1,3 +1,40 @@
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+};
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Escape special characters and split searchTerm into words/numbers
+  const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+  const terms = escapedSearchTerm.split(/\s+/); // Split into words or numbers
+  const regex = new RegExp(`(${terms.join("|")})`, "gi"); // Match any term
+
+  // Split text into parts and highlight matching terms
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+          padding: "0 2px",
+          borderRadius: "2px",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
+
+
 noproj_gq6N4NxYpKYG6ehMDlQScX6z
 
 import React, { useState } from "react";
