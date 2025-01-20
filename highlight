@@ -1,3 +1,27 @@
+
+  const getHighlightedData = (obj) => {
+    const result = [];
+    Object.entries(obj).forEach(([key, value]) => {
+      if (typeof value === "object" && value !== null) {
+        result.push(...getHighlightedData(value));
+      } else if (
+        (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
+        searchTerm
+      ) {
+        result.push({ key, value });
+      }
+    });
+    return result;
+  };
+
+  const highlightedData = getHighlightedData(item);
+
+
+
+
+
+
 const getHighlightedData = (obj) => {
   const result = [];
   const escapedSearchTerm = escapeRegExp(searchTerm.trim().toLowerCase());
