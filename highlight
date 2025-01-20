@@ -1,3 +1,44 @@
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escape special characters for regex
+};
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Split searchTerm into multiple words/numbers and escape special characters
+  const terms = searchTerm
+    .trim()
+    .split(/\s+/)
+    .map(escapeRegExp);
+
+  // Create a regex that matches any of the terms
+  const regex = new RegExp(`(${terms.join("|")})`, "gi");
+
+  // Use regex to split text and wrap matches in <span>
+  return text.split(regex).map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
+
+
+
+
+
+
 const escapeRegExp = (string) => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escape special characters for regex
 };
