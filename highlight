@@ -1,3 +1,42 @@
+
+
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+};
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Extract only the first word of the search term
+  const [firstWord] = searchTerm.trim().split(/\s+/);
+
+  if (!firstWord) return text; // Return text if no valid search term
+
+  const escapedFirstWord = escapeRegExp(firstWord); // Escape special characters
+  const regex = new RegExp(`(${escapedFirstWord})`, "i"); // Match only the first word, case-insensitive
+
+  // Highlight matching parts in the text
+  return text.split(regex).map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
+
+
+
 const escapeRegExp = (string) => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
 };
