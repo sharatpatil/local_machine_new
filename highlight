@@ -1270,5 +1270,36 @@ export default HighlightedCard;
     });
   };
 
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+};
 
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Split the search term into individual words and escape special characters
+  const words = searchTerm.split(" ").map((word) => escapeRegExp(word.trim()));
+  const regex = new RegExp(`(${words.join("|")})`, "gi"); // Create a regex for all words
+
+  const parts = text.split(regex);
+
+  return parts.map((part, index) => {
+    // Highlight the part if it matches any word in the searchTerm
+    if (words.some((word) => part.toLowerCase() === word.toLowerCase())) {
+      return (
+        <span
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            fontWeight: "bold",
+          }}
+        >
+          {part}
+        </span>
+      );
+    }
+    // Return non-matching parts as plain text
+    return part;
+  });
+};
 
