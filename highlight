@@ -1,301 +1,44 @@
 
-
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
-};
-
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
-
-  // Extract only the first word of the search term
-  const [firstWord] = searchTerm.trim().split(/\s+/);
-
-  if (!firstWord) return text; // Return text if no valid search term
-
-  const escapedFirstWord = escapeRegExp(firstWord); // Escape special characters
-  const regex = new RegExp(`(${escapedFirstWord})`, "i"); // Match only the first word, case-insensitive
-
-  // Highlight matching parts in the text
-  return text.split(regex).map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        style={{
-          backgroundColor: "#ffe58a",
-          fontWeight: "bold",
-        }}
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-};
-
-
-
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
-};
-
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
-
-  // Split the search term into individual words/numbers
-  const terms = searchTerm
-    .trim()
-    .split(/\s+/)
-    .map(escapeRegExp); // Escape special characters
-
-  if (terms.length === 0) return text;
-
-  // Create a regex to match any of the terms
-  const regex = new RegExp(`(${terms.join("|")})`, "gi"); // Match any word, case-insensitive
-
-  // Highlight matching parts in the text
-  return text.split(regex).map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        style={{
-          backgroundColor: "#ffe58a",
-          fontWeight: "bold",
-        }}
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-};
-
-
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
-};
-
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
-
-  // Extract the first word from the searchTerm
-  const firstWord = searchTerm.trim().split(/\s+/)[0];
-  if (!firstWord) return text;
-
-  // Create a regex to match the first word
-  const escapedWord = escapeRegExp(firstWord);
-  const regex = new RegExp(`(${escapedWord})`, "i"); // Case-insensitive match
-
-  // Highlight the matching part in the text
-  return text.split(regex).map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        style={{
-          backgroundColor: "#ffe58a",
-          fontWeight: "bold",
-        }}
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-};
-
-
-
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escape special characters for regex
-};
-
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
-
-  // Extract the first word from the searchTerm
-  const firstWord = searchTerm.trim().split(/\s+/)[0];
-  if (!firstWord) return text;
-
-  // Create a regex to match the first word
-  const escapedWord = escapeRegExp(firstWord);
-  const regex = new RegExp(`(${escapedWord})`, "gi");
-
-  // Split text and wrap matches in <span>
-  return text.split(regex).map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        style={{
-          backgroundColor: "#ffe58a",
-          fontWeight: "bold",
-        }}
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-};
-
-
-
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escape special characters for regex
-};
-
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
-
-  // Split searchTerm into multiple words/numbers and escape special characters
-  const terms = searchTerm
-    .trim()
-    .split(/\s+/)
-    .map(escapeRegExp);
-
-  // Create a regex that matches any of the terms
-  const regex = new RegExp(`(${terms.join("|")})`, "gi");
-
-  // Use regex to split text and wrap matches in <span>
-  return text.split(regex).map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        style={{
-          backgroundColor: "#ffe58a",
-          fontWeight: "bold",
-        }}
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-};
-
-
-
-
-
-
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escape special characters for regex
-};
-
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
-
-  // Escape special characters and split searchTerm into multiple words or numbers
-  const terms = searchTerm
-    .trim()
-    .split(/\s+/)
-    .map(escapeRegExp); // Split and escape each term
-
-  // Construct regex to match any of the terms
-  const regex = new RegExp(`(${terms.join("|")})`, "gi");
-
-  // Split text into parts using the regex and highlight matches
-  return text.split(regex).map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        style={{
-          backgroundColor: "#ffe58a",
-          fontWeight: "bold",
-          padding: "0 2px",
-          borderRadius: "2px",
-        }}
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-};
-
-
-
-
-
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
-};
-
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
-
-  // Escape special characters and split searchTerm into words/numbers
-  const escapedSearchTerm = escapeRegExp(searchTerm.trim());
-  const terms = escapedSearchTerm.split(/\s+/); // Split into words or numbers
-  const regex = new RegExp(`(${terms.join("|")})`, "gi"); // Match any term
-
-  // Split text into parts and highlight matching terms
-  const parts = text.split(regex);
-
-  return parts.map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        style={{
-          backgroundColor: "#ffe58a",
-          fontWeight: "bold",
-          padding: "0 2px",
-          borderRadius: "2px",
-        }}
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-};
-
-
-
-noproj_gq6N4NxYpKYG6ehMDlQScX6z
-
 import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+// import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+// import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Button, Modal, TextField } from "@mui/material";
+import { Button, IconButton, Modal, TextField } from "@mui/material";
+import { TreeItem, RichTreeView } from "@mui/x-tree-view";
 
 const HighlightedCardItem = ({ item, searchTerm }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [filterText, setFilterText] = useState("");
-
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+  };
+  
   const highlightText = (text) => {
     if (!searchTerm || typeof text !== "string") return text;
-
-    const regex = new RegExp(`(${searchTerm})`, "gi");
+  
+    // Escape special characters in the searchTerm and create regex for multiple words
+    const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+    const words = escapedSearchTerm.split(/\s+/).map((word) => escapeRegExp(word)); // Split into words
+    const regex = new RegExp(`(${words.join("|")})`, "gi"); // Create regex for all words
+  
+    // Split text into parts using the regex
     const parts = text.split(regex);
-
+  
     return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
+      regex.test(part) ? (
         <span
           key={index}
           style={{
             backgroundColor: "#ffe58a",
             fontWeight: "bold",
-            color: "#d32f2f",
-            padding: "2px 4px",
-            borderRadius: "4px",
+            padding: "0 2px",
+            borderRadius: "2px",
           }}
         >
           {part}
@@ -305,6 +48,7 @@ const HighlightedCardItem = ({ item, searchTerm }) => {
       )
     );
   };
+  
 
   const renderJSON = (obj, parentKey = "") => {
     return Object.entries(obj).map(([key, value]) => {
@@ -337,805 +81,7 @@ const HighlightedCardItem = ({ item, searchTerm }) => {
     });
   };
 
-  const getHighlightedData = (obj) => {
-    const result = [];
-    Object.entries(obj).forEach(([key, value]) => {
-      if (typeof value === "object" && value !== null) {
-        result.push(...getHighlightedData(value));
-      } else if (
-        (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
-        searchTerm
-      ) {
-        result.push({ key, value });
-      }
-    });
-    return result;
-  };
-
-  const highlightedData = getHighlightedData(item);
-
-  return (
-    <Card
-      variant="outlined"
-      style={{
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-        borderRadius: "10px",
-      }}
-    >
-      <CardContent
-        style={{
-          backgroundColor: "#f9f9f9",
-          padding: "20px",
-          borderBottom: "1px solid #ddd",
-
-        }}
-      >
-
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center", // Vertically align items
-            justifyContent: "space-between", // Text on the left, button on the right
-            padding: "10px 0", // Add vertical spacing around the row
-          }}
-        >
-          <Typography
-            variant="h10"
-            style={{
-              color: "#333",
-              fontSize: 14,
-            }}
-          >
-            {highlightedData.length > 0 ? (
-              highlightedData.map(({ key, value }, i) => (
-                <span key={i}>
-                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}{" "}
-                  <span>&nbsp;&nbsp;</span>
-                </span>
-              ))
-            ) : (
-              <span>No matches found</span>
-            )}
-          </Typography>
-
-        
-          <Box
-            onClick={() => setModalOpen(true)}
-            style={{ cursor: "pointer", marginRight: "5px" }}
-          >
-            
-              <VisibilityIcon sx={{ color: "grey" }} />
-           
-          </Box>
-        </Box>
-
-      </CardContent>
-
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="json-modal"
-        aria-describedby="json-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: "10px",
-            maxHeight: "80%",
-            overflowY: "auto",
-          }}
-        >
-          <Typography id="json-modal" variant="h6" component="h2" gutterBottom>
-            JSON Viewer
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            label="Filter JSON"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            style={{ marginBottom: "20px" }}
-          />
-          <div>{renderJSON(item)}</div>
-        </Box>
-      </Modal>
-
-    </Card>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <div style={{ padding: "20px" }}>
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </div>
-  );
-};
-
-export default HighlightedCard;
-
-
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  TextField,
-  Modal,
-  IconButton,
-} from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-
-const HighlightedCardItem = ({ item, searchTerm }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [filterText, setFilterText] = useState("");
-
-  const highlightText = (text) => {
-    if (!searchTerm || typeof text !== "string") return text;
-
-    const regex = new RegExp(`(${searchTerm})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <span
-          key={index}
-          style={{
-            backgroundColor: "#ffe58a",
-            fontWeight: "bold",
-            color: "#d32f2f",
-            padding: "2px 4px",
-            borderRadius: "4px",
-          }}
-        >
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  const renderFilteredJSON = (obj) => {
-    return Object.entries(obj)
-      .filter(
-        ([key, value]) =>
-          key.toLowerCase().includes(filterText.toLowerCase()) ||
-          (typeof value === "string" &&
-            value.toLowerCase().includes(filterText.toLowerCase()))
-      )
-      .map(([key, value]) => (
-        <Box key={key} sx={{ marginBottom: "10px", marginLeft: "10px" }}>
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: "bold",
-              color: "#3f51b5",
-              fontSize: 14,
-              wordBreak: "break-word",
-            }}
-          >
-            {key}:
-          </Typography>
-          {typeof value === "object" ? (
-            <Box sx={{ marginLeft: "10px" }}>{renderFilteredJSON(value)}</Box>
-          ) : (
-            <Typography
-              variant="body2"
-              sx={{
-                fontSize: 14,
-                color: "#333",
-                wordBreak: "break-word",
-              }}
-            >
-              {value}
-            </Typography>
-          )}
-        </Box>
-      ));
-  };
-
-  const getHighlightedData = (obj) => {
-    const result = [];
-    Object.entries(obj).forEach(([key, value]) => {
-      if (typeof value === "object" && value !== null) {
-        result.push(...getHighlightedData(value));
-      } else if (
-        (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
-        searchTerm
-      ) {
-        result.push({ key, value });
-      }
-    });
-    return result;
-  };
-
-  const highlightedData = getHighlightedData(item);
-
-  return (
-    <Card
-      variant="outlined"
-      sx={{
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-        borderRadius: "10px",
-      }}
-    >
-      <CardContent
-        sx={{
-          backgroundColor: "#f9f9f9",
-          padding: "20px",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "10px 0",
-          }}
-        >
-          <Typography variant="body1" sx={{ color: "#333", fontSize: 14 }}>
-            {highlightedData.length > 0 ? (
-              highlightedData.map(({ key, value }, i) => (
-                <span key={i}>
-                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}{" "}
-                </span>
-              ))
-            ) : (
-              <span>No matches found</span>
-            )}
-          </Typography>
-
-          <IconButton onClick={() => setModalOpen(true)}>
-            <VisibilityIcon sx={{ color: "grey" }} />
-          </IconButton>
-        </Box>
-      </CardContent>
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="json-modal"
-        aria-describedby="json-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "600px",
-            bgcolor: "background.paper",
-            border: "1px solid #ddd",
-            borderRadius: "10px",
-            boxShadow: 24,
-            p: 4,
-            maxHeight: "80%",
-            overflowY: "auto",
-          }}
-        >
-          <Typography
-            id="json-modal"
-            variant="h6"
-            component="h2"
-            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
-          >
-            JSON Viewer
-          </Typography>
-
-          <TextField
-            fullWidth
-            variant="outlined"
-            size="small"
-            label="Filter JSON"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            sx={{
-              marginBottom: "20px",
-            }}
-          />
-
-          <Box>{renderFilteredJSON(item)}</Box>
-
-          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-            <Button
-              variant="contained"
-              onClick={() => setModalOpen(false)}
-              sx={{ backgroundColor: "#3f51b5", color: "#fff" }}
-            >
-              Close
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
-    </Card>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <Box sx={{ padding: "20px" }}>
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </Box>
-  );
-};
-
-export default HighlightedCard;
-
-Cannot convert undefined or null to object TypeError: Cannot convert undefined or null to object
-
-
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  TextField,
-  Modal,
-  IconButton,
-} from "@mui/material";
-import { TreeView, TreeItem } from "@mui/lab";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-
-const HighlightedCardItem = ({ item, searchTerm }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [filterText, setFilterText] = useState("");
-
-  const highlightText = (text) => {
-    if (!searchTerm || typeof text !== "string") return text;
-
-    const regex = new RegExp(`(${searchTerm})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <span
-          key={index}
-          style={{
-            backgroundColor: "#ffe58a",
-            fontWeight: "bold",
-            color: "#d32f2f",
-            padding: "2px 4px",
-            borderRadius: "4px",
-          }}
-        >
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  const renderTreeItems = (data, parentKey = "") => {
-    if (typeof data !== "object" || data === null) {
-      return null;
-    }
-
-    return Object.entries(data).map(([key, value]) => {
-      const nodeId = `${parentKey}-${key}`;
-
-      // Filter logic for keys and values
-      const matchesFilter =
-        key.toLowerCase().includes(filterText.toLowerCase()) ||
-        (typeof value === "string" &&
-          value.toLowerCase().includes(filterText.toLowerCase()));
-
-      if (!matchesFilter && filterText) return null;
-
-      return (
-        <TreeItem
-          key={nodeId}
-          nodeId={nodeId}
-          label={
-            <span>
-              <strong>{key}:</strong>{" "}
-              {typeof value === "object" ? null : value?.toString()}
-            </span>
-          }
-        >
-          {typeof value === "object" && value !== null
-            ? renderTreeItems(value, nodeId)
-            : null}
-        </TreeItem>
-      );
-    });
-  };
-
-  const getHighlightedData = (obj) => {
-    const result = [];
-    if (typeof obj === "object" && obj !== null) {
-      Object.entries(obj).forEach(([key, value]) => {
-        if (typeof value === "object" && value !== null) {
-          result.push(...getHighlightedData(value));
-        } else if (
-          (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
-          searchTerm
-        ) {
-          result.push({ key, value });
-        }
-      });
-    }
-    return result;
-  };
-
-  const highlightedData = getHighlightedData(item);
-
-  return (
-    <Card
-      variant="outlined"
-      sx={{
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-        borderRadius: "10px",
-      }}
-    >
-      <CardContent
-        sx={{
-          backgroundColor: "#f9f9f9",
-          padding: "20px",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "10px 0",
-          }}
-        >
-          <Typography variant="body1" sx={{ color: "#333", fontSize: 14 }}>
-            {highlightedData.length > 0 ? (
-              highlightedData.map(({ key, value }, i) => (
-                <span key={i}>
-                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}{" "}
-                </span>
-              ))
-            ) : (
-              <span>No matches found</span>
-            )}
-          </Typography>
-
-          <IconButton onClick={() => setModalOpen(true)}>
-            <VisibilityIcon sx={{ color: "grey" }} />
-          </IconButton>
-        </Box>
-      </CardContent>
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="json-modal"
-        aria-describedby="json-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "600px",
-            bgcolor: "background.paper",
-            border: "1px solid #ddd",
-            borderRadius: "10px",
-            boxShadow: 24,
-            p: 4,
-            maxHeight: "80%",
-            overflowY: "auto",
-          }}
-        >
-          <Typography
-            id="json-modal"
-            variant="h6"
-            component="h2"
-            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
-          >
-            JSON Viewer
-          </Typography>
-
-          <TextField
-            fullWidth
-            variant="outlined"
-            size="small"
-            label="Filter JSON"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            sx={{
-              marginBottom: "20px",
-            }}
-          />
-
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            sx={{ flexGrow: 1, overflowY: "auto" }}
-          >
-            {renderTreeItems(item)}
-          </TreeView>
-
-          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-            <button
-              variant="contained"
-              onClick={() => setModalOpen(false)}
-              style={{
-                backgroundColor: "#3f51b5",
-                color: "#fff",
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Close
-            </button>
-          </Box>
-        </Box>
-      </Modal>
-    </Card>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <Box sx={{ padding: "20px" }}>
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </Box>
-  );
-};
-
-export default HighlightedCard;
-
-
-
-
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  TextField,
-  Modal,
-  IconButton,
-} from "@mui/material";
-import { TreeView, TreeItem } from "@mui/lab";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-
-const HighlightedCardItem = ({ item, searchTerm }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [filterText, setFilterText] = useState("");
-
-  // Helper function to render the TreeView structure
-  const renderTreeItems = (data, parentKey = "") => {
-    if (!data || typeof data !== "object") return null;
-
-    return Object.entries(data).map(([key, value]) => {
-      const nodeId = `${parentKey}-${key}`;
-      const isExpandable = typeof value === "object" && value !== null;
-
-      // Check if the key or value matches the filter
-      const matchesFilter =
-        key.toLowerCase().includes(filterText.toLowerCase()) ||
-        (typeof value === "string" &&
-          value.toLowerCase().includes(filterText.toLowerCase()));
-
-      // Skip rendering items that don't match the filter
-      if (filterText && !matchesFilter) return null;
-
-      return (
-        <TreeItem
-          key={nodeId}
-          nodeId={nodeId}
-          label={
-            <span>
-              <strong>{key}:</strong> {isExpandable ? null : value?.toString()}
-            </span>
-          }
-        >
-          {isExpandable ? renderTreeItems(value, nodeId) : null}
-        </TreeItem>
-      );
-    });
-  };
-
-  const getHighlightedData = (obj) => {
-    const result = [];
-    if (typeof obj === "object" && obj !== null) {
-      Object.entries(obj).forEach(([key, value]) => {
-        if (typeof value === "object" && value !== null) {
-          result.push(...getHighlightedData(value));
-        } else if (
-          (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
-          searchTerm
-        ) {
-          result.push({ key, value });
-        }
-      });
-    }
-    return result;
-  };
-
-  const highlightedData = getHighlightedData(item);
-
-  return (
-    <Card
-      variant="outlined"
-      sx={{
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-        borderRadius: "10px",
-      }}
-    >
-      <CardContent
-        sx={{
-          backgroundColor: "#f9f9f9",
-          padding: "20px",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "10px 0",
-          }}
-        >
-          <Typography variant="body1" sx={{ color: "#333", fontSize: 14 }}>
-            {highlightedData.length > 0 ? (
-              highlightedData.map(({ key, value }, i) => (
-                <span key={i}>
-                  <strong>{key}:</strong> {value?.toString()}{" "}
-                </span>
-              ))
-            ) : (
-              <span>No matches found</span>
-            )}
-          </Typography>
-
-          <IconButton onClick={() => setModalOpen(true)}>
-            <VisibilityIcon sx={{ color: "grey" }} />
-          </IconButton>
-        </Box>
-      </CardContent>
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="json-modal"
-        aria-describedby="json-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "600px",
-            bgcolor: "background.paper",
-            border: "1px solid #ddd",
-            borderRadius: "10px",
-            boxShadow: 24,
-            p: 4,
-            maxHeight: "80%",
-            overflowY: "auto",
-          }}
-        >
-          <Typography
-            id="json-modal"
-            variant="h6"
-            component="h2"
-            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
-          >
-            JSON Viewer
-          </Typography>
-
-          <TextField
-            fullWidth
-            variant="outlined"
-            size="small"
-            label="Filter JSON"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            sx={{
-              marginBottom: "20px",
-            }}
-          />
-
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            sx={{ flexGrow: 1, overflowY: "auto" }}
-          >
-            {renderTreeItems(item)}
-          </TreeView>
-
-          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-            <button
-              onClick={() => setModalOpen(false)}
-              style={{
-                backgroundColor: "#3f51b5",
-                color: "#fff",
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Close
-            </button>
-          </Box>
-        </Box>
-      </Modal>
-    </Card>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <Box sx={{ padding: "20px" }}>
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </Box>
-  );
-};
-
-export default HighlightedCard;
-
-
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  TextField,
-  Modal,
-  IconButton,
-} from "@mui/material";
-import { TreeView, TreeItem } from "@mui/lab";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-
-const HighlightedCardItem = ({ item, searchTerm }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [filterText, setFilterText] = useState("");
-
+  
   // Recursive function to render tree items
   const renderTreeItems = (data, parentKey = "") => {
     if (data === null || data === undefined) return null;
@@ -1169,221 +115,19 @@ const HighlightedCardItem = ({ item, searchTerm }) => {
     });
   };
 
-  // Extract highlighted data for summary view
   const getHighlightedData = (obj) => {
     const result = [];
-    if (typeof obj === "object" && obj !== null) {
-      Object.entries(obj).forEach(([key, value]) => {
-        if (typeof value === "object" && value !== null) {
-          result.push(...getHighlightedData(value));
-        } else if (
-          (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
-          searchTerm
-        ) {
-          result.push({ key, value });
-        }
-      });
-    }
-    return result;
-  };
-
-  const highlightedData = getHighlightedData(item);
-
-  return (
-    <Card
-      variant="outlined"
-      sx={{
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-        borderRadius: "10px",
-      }}
-    >
-      <CardContent
-        sx={{
-          backgroundColor: "#f9f9f9",
-          padding: "20px",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography variant="body1" sx={{ fontSize: "14px" }}>
-            {highlightedData.length > 0 ? (
-              highlightedData.map(({ key, value }, i) => (
-                <span key={i}>
-                  <strong>{key}:</strong> {value?.toString()}{" "}
-                </span>
-              ))
-            ) : (
-              <span>No matches found</span>
-            )}
-          </Typography>
-
-          <IconButton onClick={() => setModalOpen(true)}>
-            <VisibilityIcon sx={{ color: "grey" }} />
-          </IconButton>
-        </Box>
-      </CardContent>
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="json-modal"
-        aria-describedby="json-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "600px",
-            bgcolor: "background.paper",
-            border: "1px solid #ddd",
-            borderRadius: "10px",
-            boxShadow: 24,
-            p: 4,
-            maxHeight: "80%",
-            overflowY: "auto",
-          }}
-        >
-          <Typography
-            id="json-modal"
-            variant="h6"
-            component="h2"
-            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
-          >
-            JSON Viewer
-          </Typography>
-
-          <TextField
-            fullWidth
-            variant="outlined"
-            size="small"
-            label="Filter JSON"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            sx={{ marginBottom: "20px" }}
-          />
-
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            sx={{ flexGrow: 1, overflowY: "auto" }}
-          >
-            {renderTreeItems(item)}
-          </TreeView>
-        </Box>
-      </Modal>
-    </Card>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <Box sx={{ padding: "20px" }}>
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </Box>
-  );
-};
-
-export default HighlightedCard;
-
-
-MUI X: The Tree View component requires all items to have a unique `id` property.
-Alternatively, you can use the `getItemId` prop to specify a custom id for each item.
-Two items were provided with the same id in the `items` prop: "undefined"
-Error: MUI X: The Tree View component requires all items to have a unique `id` property.
-Alternatively, you can use the `getItemId` prop to specify a custom id for each item.
-Two items were provided with the same id in the `items` prop: "undefined"
-    at http://localhost:3001/static/js/bundle.js:37917:15
-
-
-
-
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  TextField,
-  Modal,
-  IconButton,
-} from "@mui/material";
-import { TreeView, TreeItem } from "@mui/lab";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-
-const HighlightedCardItem = ({ item, searchTerm }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [filterText, setFilterText] = useState("");
-
-  // Helper to generate unique IDs for TreeItems
-  const generateUniqueId = (() => {
-    let counter = 0;
-    return () => `tree-item-${counter++}`;
-  })();
-
-  // Recursive function to render tree items with unique IDs
-  const renderTreeItems = (data, parentKey = "") => {
-    if (data === null || data === undefined) return null;
-
-    return Object.entries(data).map(([key, value]) => {
-      const nodeId = generateUniqueId();
-      const isExpandable = typeof value === "object" && value !== null;
-
-      // Check if the key or value matches the filter
-      const matchesFilter =
-        key.toLowerCase().includes(filterText.toLowerCase()) ||
-        (typeof value === "string" &&
-          value.toLowerCase().includes(filterText.toLowerCase()));
-
-      // Skip items that don't match the filter
-      if (filterText && !matchesFilter) return null;
-
-      return (
-        <TreeItem
-          key={nodeId}
-          nodeId={nodeId}
-          label={
-            <span>
-              <strong>{key}:</strong> {isExpandable ? null : value?.toString()}
-            </span>
-          }
-        >
-          {isExpandable && renderTreeItems(value, nodeId)}
-        </TreeItem>
-      );
+    Object.entries(obj).forEach(([key, value]) => {
+      if (typeof value === "object" && value !== null) {
+        result.push(...getHighlightedData(value));
+      } else if (
+        (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
+        searchTerm
+      ) {
+        result.push({ key, value });
+      }
     });
-  };
-
-  // Extract highlighted data for summary view
-  const getHighlightedData = (obj) => {
-    const result = [];
-    if (typeof obj === "object" && obj !== null) {
-      Object.entries(obj).forEach(([key, value]) => {
-        if (typeof value === "object" && value !== null) {
-          result.push(...getHighlightedData(value));
-        } else if (
-          (key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            value?.toString().toLowerCase().includes(searchTerm.toLowerCase())) &&
-          searchTerm
-        ) {
-          result.push({ key, value });
-        }
-      });
-    }
     return result;
   };
 
@@ -1391,218 +135,145 @@ const HighlightedCardItem = ({ item, searchTerm }) => {
 
   return (
     <Card
-      variant="outlined"
-      sx={{
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-        borderRadius: "10px",
-      }}
-    >
+  variant="outlined"
+  style={{
+    marginBottom: "20px",
+    border: "1px solid #ddd",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+    borderRadius: "10px",
+    width: "80%",
+    margin: "20px auto", // Centers the Card horizontally
+  }}
+>
+  
       <CardContent
-        sx={{
+        style={{
           backgroundColor: "#f9f9f9",
           padding: "20px",
           borderBottom: "1px solid #ddd",
+
         }}
       >
+
         <Box
-          sx={{
+          style={{
             display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography variant="body1" sx={{ fontSize: "14px" }}>
-            {highlightedData.length > 0 ? (
-              highlightedData.map(({ key, value }, i) => (
-                <span key={i}>
-                  <strong>{key}:</strong> {value?.toString()}{" "}
-                </span>
-              ))
-            ) : (
-              <span>No matches found</span>
-            )}
-          </Typography>
-
-          <IconButton onClick={() => setModalOpen(true)}>
-            <VisibilityIcon sx={{ color: "grey" }} />
-          </IconButton>
-        </Box>
-      </CardContent>
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="json-modal"
-        aria-describedby="json-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "600px",
-            bgcolor: "background.paper",
-            border: "1px solid #ddd",
-            borderRadius: "10px",
-            boxShadow: 24,
-            p: 4,
-            maxHeight: "80%",
-            overflowY: "auto",
+            alignItems: "center", // Vertically align items
+            justifyContent: "space-between", // Text on the left, button on the right
+            padding: "10px 0", // Add vertical spacing around the row
           }}
         >
           <Typography
-            id="json-modal"
-            variant="h6"
-            component="h2"
-            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
-          >
-            JSON Viewer
-          </Typography>
-
-          <TextField
-            fullWidth
-            variant="outlined"
-            size="small"
-            label="Filter JSON"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            sx={{ marginBottom: "20px" }}
-          />
-
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            sx={{ flexGrow: 1, overflowY: "auto" }}
-          >
-            {renderTreeItems(item)}
-          </TreeView>
-        </Box>
-      </Modal>
-    </Card>
-  );
-};
-
-const HighlightedCard = ({ data, searchTerm }) => {
-  return (
-    <Box sx={{ padding: "20px" }}>
-      {data.map((item, index) => (
-        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
-      ))}
-    </Box>
-  );
-};
-
-export default HighlightedCard;
-
-
-
-  const escapeRegExp = (string) => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
-  };
-  
-  const highlightText = (text) => {
-    if (!searchTerm || typeof text !== "string") return text;
-  
-    const escapedSearchTerm = escapeRegExp(searchTerm); // Escape special characters
-    const regex = new RegExp(`(${escapedSearchTerm})`, "gi"); // Case-insensitive regex
-    const parts = text.split(regex);
-
-    // console.log('regex',['10','13'])
-  
-    return parts.map((part, index) => {
-      // Highlight the part if it matches the searchTerm
-
-      // console.log('part',part)
-
-      console.log('match',part.match(['13']))
-      if (part.match([10,13])) {
-        return (
-          <span
-            key={index}
+            variant="h10"
             style={{
-              backgroundColor: "#ffe58a",
-              fontWeight: "bold",
+              color: "#333",
+              fontSize: 14,
             }}
           >
-            {part}
-          </span>
-        );
-      }
-      // Return non-matching parts as plain text
-      return part;
-    });
-  };
+            {highlightedData.length > 0 ? (
+              highlightedData.map(({ key, value }, i) => (
 
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
-};
+                <span key={i}>
+                  <strong>{highlightText(key)}:</strong>{highlightText(value?.toString())}
+                  <br/>
+                </span>
+              ))
+            ) : (
+              <span>No matches found</span>
+            )}
 
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
 
-  // Split the search term into individual words and escape special characters
-  const words = searchTerm.split(" ").map((word) => escapeRegExp(word.trim()));
-  const regex = new RegExp(`(${words.join("|")})`, "gi"); // Create a regex for all words
+  
+          </Typography>
 
-  const parts = text.split(regex);
+          <IconButton onClick={() => setModalOpen(true)}>
+            <VisibilityIcon sx={{ color: "grey" }} />
+          </IconButton>
+        </Box>
 
-  return parts.map((part, index) => {
-    // Highlight the part if it matches any word in the searchTerm
-    if (words.some((word) => part.toLowerCase() === word.toLowerCase())) {
-      return (
-        <span
-          key={index}
-          style={{
-            backgroundColor: "#ffe58a",
-            fontWeight: "bold",
+      </CardContent>
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="json-modal"
+        aria-describedby="json-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "600px",
+            bgcolor: "background.paper",
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            boxShadow: 24,
+            p: 4,
+            maxHeight: "80%",
+            overflowY: "auto",
           }}
         >
-          {part}
-        </span>
-      );
-    }
-    // Return non-matching parts as plain text
-    return part;
-  });
-};
+          <Typography
+            id="json-modal"
+            variant="h6"
+            component="h2"
+            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
+          >
+            JSON Viewer
+          </Typography>
 
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
+            label="Filter JSON"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            sx={{
+              marginBottom: "20px",
+            }}
+          />
 
+          {/* <RichTreeView
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpandIcon={<ChevronRightIcon />}
+            sx={{ flexGrow: 1, overflowY: "auto" }}
+          > */}
+            {renderJSON(item)}
+          {/* </RichTreeView> */}
 
-
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
-};
-
-const highlightText = (text) => {
-  if (!searchTerm || typeof text !== "string") return text;
-
-  // Escape special characters in the searchTerm and create regex for multiple words
-  const escapedSearchTerm = escapeRegExp(searchTerm.trim());
-  const words = escapedSearchTerm.split(/\s+/).map((word) => escapeRegExp(word)); // Split into words
-  const regex = new RegExp(`(${words.join("|")})`, "gi"); // Create regex for all words
-
-  // Split text into parts using the regex
-  const parts = text.split(regex);
-
-  return parts.map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        style={{
-          backgroundColor: "#ffe58a",
-          fontWeight: "bold",
-          padding: "0 2px",
-          borderRadius: "2px",
-        }}
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
+          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+            <button
+              onClick={() => setModalOpen(false)}
+              style={{
+                backgroundColor: "#3f51b5",
+                color: "#fff",
+                padding: "10px 20px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Close
+            </button>
+          </Box>
+        </Box>
+      </Modal>
+    </Card>
   );
 };
+
+const HighlightedCard = ({ data, searchTerm }) => {
+  return (
+    <div style={{ padding: "20px" }}>
+      {data.map((item, index) => (
+        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
+      ))}
+    </div>
+  );
+};
+
+export default HighlightedCard;
+
