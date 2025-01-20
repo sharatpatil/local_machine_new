@@ -1,3 +1,40 @@
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+};
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Extract the first word from the searchTerm
+  const firstWord = searchTerm.trim().split(/\s+/)[0];
+  if (!firstWord) return text;
+
+  // Create a regex to match the first word
+  const escapedWord = escapeRegExp(firstWord);
+  const regex = new RegExp(`(${escapedWord})`, "i"); // Case-insensitive match
+
+  // Highlight the matching part in the text
+  return text.split(regex).map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
+
+
+
 const escapeRegExp = (string) => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escape special characters for regex
 };
