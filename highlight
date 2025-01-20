@@ -1,6 +1,82 @@
 const getHighlightedData = (obj) => {
   const result = [];
   const escapedSearchTerm = escapeRegExp(searchTerm.trim().toLowerCase());
+  const searchRegex = new RegExp(escapedSearchTerm, "gi");
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (typeof value === "object" && value !== null) {
+      result.push(...getHighlightedData(value));
+    } else {
+      const keyMatches = searchRegex.test(key.toLowerCase());
+      const valueMatches =
+        typeof value === "string" && searchRegex.test(value.toLowerCase());
+
+      if (keyMatches || valueMatches) {
+        result.push({ key, value });
+      }
+    }
+  });
+
+  return result;
+};
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+  const regex = new RegExp(`(${escapedSearchTerm})`, "gi");
+
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+          padding: "0 2px",
+          borderRadius: "2px",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
+return (
+  <Typography
+    variant="h10"
+    style={{
+      color: "#333",
+      fontSize: 14,
+    }}
+  >
+    {highlightedData.length > 0 ? (
+      highlightedData.map(({ key, value }, i) => (
+        <span key={i}>
+          <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}
+          <br />
+        </span>
+      ))
+    ) : (
+      <span>No matches found</span>
+    )}
+  </Typography>
+);
+
+
+
+
+77777777777777
+
+
+const getHighlightedData = (obj) => {
+  const result = [];
+  const escapedSearchTerm = escapeRegExp(searchTerm.trim().toLowerCase());
 
   Object.entries(obj).forEach(([key, value]) => {
     if (typeof value === "object" && value !== null) {
