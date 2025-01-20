@@ -3,6 +3,41 @@ const getHighlightedData = (obj) => {
   const searchWords = searchTerm
     ?.toLowerCase()
     .trim()
+    .split(/\s+/); // Ensure even a single word becomes an array
+
+  if (!searchWords || searchWords.length === 0) return result;
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const isNestedObject = typeof value === "object" && value !== null;
+
+    const keyMatches = searchWords.some((word) =>
+      key.toLowerCase().includes(word)
+    );
+
+    const valueMatches =
+      typeof value === "string" &&
+      searchWords.some((word) => value.toLowerCase().includes(word));
+
+    if (isNestedObject) {
+      // Recursively check nested objects
+      result.push(...getHighlightedData(value));
+    } else if (keyMatches || valueMatches) {
+      // Push matches to the result array
+      result.push({ key, value });
+    }
+  });
+
+  return result;
+};
+
+
+
+
+const getHighlightedData = (obj) => {
+  const result = [];
+  const searchWords = searchTerm
+    ?.toLowerCase()
+    .trim()
     .split(/\s+/); // Split search term into individual words
 
   if (!searchWords || searchWords.length === 0) return result;
