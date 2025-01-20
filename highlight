@@ -1,3 +1,47 @@
+const getHighlightedData = (obj) => {
+  const result = [];
+  const escapedSearchTerm = escapeRegExp(searchTerm.trim().toLowerCase());
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (typeof value === "object" && value !== null) {
+      // Recursively process nested objects
+      result.push(...getHighlightedData(value));
+    } else {
+      // Match keys or values against the searchTerm
+      const keyMatches = key.toLowerCase().includes(escapedSearchTerm);
+      const valueMatches =
+        typeof value === "string" &&
+        value.toLowerCase().includes(escapedSearchTerm);
+
+      if (keyMatches || valueMatches) {
+        result.push({ key, value });
+      }
+    }
+  });
+
+  return result;
+};
+
+
+<Typography
+  variant="h10"
+  style={{
+    color: "#333",
+    fontSize: 14,
+  }}
+>
+  {highlightedData.length > 0 ? (
+    highlightedData.map(({ key, value }, i) => (
+      <span key={i}>
+        <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}
+        <br />
+      </span>
+    ))
+  ) : (
+    <span>No matches found</span>
+  )}
+</Typography>
+
 
 import React, { useState } from "react";
 import Card from "@mui/material/Card";
