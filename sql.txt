@@ -999,3 +999,5 @@ WHERE to_tsvector('english', data->>'key1') @@ to_tsquery('141066')  -- Full-tex
    OR data->>'key1' % '141066';  -- Trigram-based partial matching on extracted text
 
 
+CREATE INDEX data_text_idx ON bpsi_intv_6rvginkmsnhgprpfmkalqoe1 USING GIN (data::text);
+
