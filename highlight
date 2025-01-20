@@ -1,4 +1,4 @@
-proj_gq6N4NxYpKYG6ehMDlQScX6z
+noproj_gq6N4NxYpKYG6ehMDlQScX6z
 
 import React, { useState } from "react";
 import Card from "@mui/material/Card";
@@ -1303,3 +1303,40 @@ const highlightText = (text) => {
   });
 };
 
+
+
+
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+};
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Escape special characters in the searchTerm and create regex for multiple words
+  const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+  const words = escapedSearchTerm.split(/\s+/).map((word) => escapeRegExp(word)); // Split into words
+  const regex = new RegExp(`(${words.join("|")})`, "gi"); // Create regex for all words
+
+  // Split text into parts using the regex
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+          padding: "0 2px",
+          borderRadius: "2px",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
