@@ -1157,3 +1157,7 @@ app.get('/multi_word_search1', async (req, res) => {
 
 
 
+UPDATE my_table
+SET combined_vector = to_tsvector('english', data::text || ' ' || reverse(data::text));
+
+
