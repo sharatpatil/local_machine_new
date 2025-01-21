@@ -1006,3 +1006,44 @@ SELECT *
 FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
 WHERE document_vector <-> (SELECT to_tsvector('english', 'your search term here')::vector)
 LIMIT 100;
+
+
+
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 3600 }); // Cache for 1 hour
+
+app.get('/search', async (req, res) => {
+  const { term = '', page = 1, limit = 100 } = req.query;
+  const offset = (page - 1) * limit;
+
+  try {
+    const cacheKey = `search:${term}:page:${page}:limit:${limit}`;
+
+    // Check if data is in cache
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      return res.json({ source: 'cache', data: cachedData });
+    }
+
+    console.log('Fetching from database');
+    const query = `
+      SELECT *
+      FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
+      WHERE document_vector @@ to_tsquery($1)
+      LIMIT $2 OFFSET $3
+    `;
+
+    const values = [`${term}:*`, parseInt(limit), parseInt(offset)];
+    const { rows } = await pool.query(query, values);
+
+    // Store results in cache
+    cache.set(cacheKey, rows);
+
+    res.json({ source: 'database', count: rows.length, data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
