@@ -1,3 +1,21 @@
+<div className="show">
+        <text class="uuid">Showing {data ? data.length : count} results </text>
+        <text class="uuid">Showing {data ? data.length : count} results </text>
+        <hr />
+      </div>
+
+.show {
+    width: 80%;
+    display: flex;
+    align-items:center;
+    justify-content: center; /* Centers the content horizontally */
+    margin: 0 auto; /* Centers the container within the parent element horizontally */
+    margin-bottom: 20px; /* Keeps the existing vertical spacing */
+    border-bottom: 1px solid #ccc; /* Adds a thin gray line below */
+    gap:10px;
+}
+
+
 function getData() {
         if (!selectedSchema) {
             alert("Please select a schema before searching.");
