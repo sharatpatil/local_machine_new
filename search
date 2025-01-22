@@ -1,3 +1,88 @@
+import './Navbar.scss';
+import 'font-awesome/css/font-awesome.min.css';
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import PolicyIcon from '@mui/icons-material/Policy';
+
+function Navbar () {
+
+    return (
+        <div className="navBar">
+        <div />
+        <img className="logo" src="Images/sc-logo.svg" />
+        <text className="bpsi">BPSI  <text className="bpsi-title">Smart <PolicyIcon /> </text> </text>
+       
+        <div className="user">
+          <span className="user-icon">
+            { /* <i className="fas fa-user" /> */ }
+            <span>
+              <div className="user-name">BPSI Team</div>
+            </span>
+          </span>
+        </div>
+      </div>
+
+  );
+}
+
+export default Navbar;
+
+
+@use '../../Colors.scss' as c;
+
+.navBar {
+	height: 60px;
+	width: 100%;
+	background-image: linear-gradient(to right,#00008B, #0096FF);
+	display: flex;
+}
+
+.logo {
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.bpsi {
+	color: #0FFF50;
+	flex-grow: 1;
+	margin-top: 20px;
+}
+
+.bpsi-title{
+	color: #fff;
+	flex-grow: 1;
+	margin-top: 20px;
+	font-weight: bold;
+}
+
+.user {
+	float: right;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-top: 10px;
+	display: flex;
+}
+
+.user-name {
+	color: white;
+	font-size: medium;
+	margin-top: 10px;
+}
+
+.user-icon {
+	font-size: 20px;
+	margin-right: 10px;
+	color: white;
+}
+
+
+////////////
+
+
+
+
+
 .show {
   width: 80%;
   display: flex;
