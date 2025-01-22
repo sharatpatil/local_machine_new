@@ -1,4 +1,28 @@
 <div className="show">
+  <text class="uuid">Showing {data ? data.length : count} results</text>
+  <text class="uuid">Page 1 of 10</text>
+  <hr />
+</div>
+
+
+.show {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Adds space between the two text elements */
+  margin: 0 auto; /* Centers the container within the parent element horizontally */
+  margin-bottom: 20px; /* Keeps the existing vertical spacing */
+  border-bottom: 1px solid #ccc; /* Adds a thin gray line below */
+  gap: 10px; /* Adds spacing between items, if necessary */
+}
+
+.uuid {
+  font-size: 14px; /* Adjust text size */
+  color: #333; /* Optional: Adjust text color */
+}
+
+
+<div className="show">
         <text class="uuid">Showing {data ? data.length : count} results </text>
         <text class="uuid">Showing {data ? data.length : count} results </text>
         <hr />
