@@ -3,6 +3,39 @@ import 'font-awesome/css/font-awesome.min.css';
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import PolicyIcon from '@mui/icons-material/Policy';
 
+function Navbar() {
+  return (
+    <div className="navBar">
+      <div />
+      <img className="logo" src="Images/sc-logo.svg" alt="Logo" />
+      <div className="bpsi">
+        BPSI  
+        <span className="bpsi-title">
+          Smart 
+          <PolicyIcon /> 
+        </span>
+      </div>
+      <div className="user">
+        <span className="user-icon">
+          {/* <i className="fas fa-user" /> */}
+          <div className="user-name">BPSI Team</div>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export default Navbar;
+
+
+///////////
+
+
+import './Navbar.scss';
+import 'font-awesome/css/font-awesome.min.css';
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import PolicyIcon from '@mui/icons-material/Policy';
+
 function Navbar () {
 
     return (
