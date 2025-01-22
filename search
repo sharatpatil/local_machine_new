@@ -1,3 +1,27 @@
+function getData() {
+        if (!selectedSchema) {
+            alert("Please select a schema before searching.");
+            return;
+        }
+        setLoading(true);
+        setTerm(query);
+        setSchema(selectedSchema);
+        getDataAPI(query,selectedSchema).then((data) => {
+            console.log(data);
+            setData(data.data);
+            setLoading(false);
+        });
+
+        getDataCountAPI(query,selectedSchema).then((data)){}
+    }
+
+
+
+
+
+
+
+
 app.get('/multi_word_count', async (req, res) => {
   const { term = '', schema } = req.query;
 
