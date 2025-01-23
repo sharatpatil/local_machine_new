@@ -8,6 +8,55 @@ const highlightText = (text) => {
   // Split the search term into individual words
   const searchWords = searchTerm.trim().split(/\s+/);
 
+  // Create regex for both original and reversed search terms
+  const escapedSearchTerm = searchWords.map(escapeRegExp).join("\\s+");
+  const escapedReversedSearchTerm = searchWords
+    .reverse()
+    .map(escapeRegExp)
+    .join("\\s+");
+  const regex = new RegExp(
+    `(${escapedSearchTerm}|${escapedReversedSearchTerm})`,
+    "gi"
+  );
+
+  // Split the text into parts using the regex
+  const parts = text.split(regex);
+
+  return parts.map((part, index) => {
+    // Reverse the current part to check against the reversed search term
+    const isHighlighted = regex.test(part);
+
+    return isHighlighted ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+          borderRadius: "2px",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    );
+  });
+};
+
+
+
+
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Escape special characters in the search term
+  const escapeRegExp = (str) =>
+    str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  // Split the search term into individual words
+  const searchWords = searchTerm.trim().split(/\s+/);
+
   // Reverse the search term string
   const reversedSearchTerm = searchWords.reverse().join(" ");
 
