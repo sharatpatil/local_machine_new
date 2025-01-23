@@ -1,4 +1,204 @@
+function JsonModal({ modalOpen, setModalOpen, item, searchTerm }) {
+  const [expandedNodes, setExpandedNodes] = useState({});
 
+  // Expand all nodes when modal opens
+  useEffect(() => {
+    if (modalOpen) {
+      const expandAllNodes = (data, path = "") => {
+        const nodes = {};
+        Object.entries(data).forEach(([key, value]) => {
+          const nodePath = path ? `${path}.${key}` : key;
+          nodes[nodePath] = true; // Mark as expanded
+          if (typeof value === "object" && value !== null) {
+            Object.assign(nodes, expandAllNodes(value, nodePath));
+          }
+        });
+        return nodes;
+      };
+      setExpandedNodes(expandAllNodes(item));
+    }
+  }, [modalOpen, item]);
+
+  // Handle node toggle
+  const toggleNode = (path) => {
+    setExpandedNodes((prev) => ({ ...prev, [path]: !prev[path] }));
+  };
+
+  // Highlight matching text
+  const highlightText = (text) => {
+    if (!searchTerm || typeof text !== "string") return text;
+
+    const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+    const words = escapedSearchTerm.split(/\s+/).map((word) => escapeRegExp(word)); // Split into words
+    const regex = new RegExp(`(${words.join("|")})`, "gi"); // Create regex for all words
+
+    const parts = text.split(regex);
+    return parts.map((part, index) =>
+      regex.test(part) ? (
+        <span
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            fontWeight: "bold",
+            borderRadius: "2px",
+          }}
+        >
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  // Recursive Tree Rendering with Highlight and Expansion
+  const renderTree = (data, path = "") => {
+    return Object.entries(data).map(([key, value]) => {
+      const nodePath = path ? `${path}.${key}` : key;
+      const isExpandable = typeof value === "object" && value !== null;
+      const isExpanded = expandedNodes[nodePath];
+      const matchesSearch = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase());
+
+      return (
+        <Box key={nodePath} sx={{ ml: 2, mt: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              cursor: isExpandable ? "pointer" : "default",
+            }}
+            onClick={() => isExpandable && toggleNode(nodePath)}
+          >
+            {isExpandable ? (
+              isExpanded ? (
+                <ExpandMoreIcon sx={{ fontSize: 16, mr: 1 }} />
+              ) : (
+                <ChevronRightIcon sx={{ fontSize: 16, mr: 1 }} />
+              )
+            ) : (
+              <Box sx={{ width: 16, mr: 1 }} />
+            )}
+            <Typography
+              component="span"
+              sx={{
+                fontWeight: isExpandable ? "bold" : "normal",
+                color: isExpandable ? "#3f51b5" : "#000",
+              }}
+            >
+              {highlightText(key)}:
+            </Typography>
+            {!isExpandable && (
+              <Typography
+                component="span"
+                sx={{ ml: 1, color: "gray", fontFamily: "monospace" }}
+              >
+                {highlightText(String(value))}
+              </Typography>
+            )}
+          </Box>
+          {isExpandable && isExpanded && (
+            <Box sx={{ ml: 2 }}>{renderTree(value, nodePath)}</Box>
+          )}
+        </Box>
+      );
+    });
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(JSON.stringify(item, null, 2));
+    alert("JSON copied to clipboard!");
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([JSON.stringify(item, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "domain-json.json";
+    link.click();
+  };
+
+  return (
+    <Modal
+      open={modalOpen}
+      onClose={() => setModalOpen(false)}
+      aria-labelledby="json-modal"
+      aria-describedby="json-modal-description"
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "600px",
+          bgcolor: "background.paper",
+          border: "1px solid #ddd",
+          borderRadius: "10px",
+          boxShadow: 24,
+          p: 4,
+          maxHeight: "80%",
+          overflowY: "auto",
+        }}
+      >
+        {/* Modal Header */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography
+            id="json-modal"
+            variant="h6"
+            component="h2"
+            sx={{ color: "#3f51b5" }}
+          >
+            Domain JSON Viewer
+          </Typography>
+          <Box>
+            <Tooltip title="Copy JSON">
+              <IconButton onClick={handleCopy}>
+                <ContentCopyIcon sx={{ color: "#3f51b5" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Download JSON">
+              <IconButton onClick={handleDownload}>
+                <FileDownloadIcon sx={{ color: "#3f51b5" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Close">
+              <IconButton onClick={() => setModalOpen(false)}>
+                <CloseIcon sx={{ color: "#3f51b5" }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Box>
+
+        {/* Custom Tree Viewer */}
+        <Box
+          sx={{
+            bgcolor: "#f5f5f5",
+            padding: "10px",
+            borderRadius: "5px",
+            maxHeight: "400px",
+            overflowY: "auto",
+            border: "1px solid #ddd",
+          }}
+        >
+          {renderTree(item)}
+        </Box>
+      </Box>
+    </Modal>
+  );
+}
+
+export default JsonModal;
+
+
+/////////////////////////////////////////////////////////////////////
   const highlightText = (text) => {
     if (!searchTerm || typeof text !== "string") return text;
 
