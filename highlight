@@ -1,3 +1,39 @@
+
+  const getHighlightedData = (obj) => {
+    const result = [];
+    const searchWords = searchTerm
+      ?.toLowerCase()
+      .trim()
+      .split(/\s+/); // Split the search term into individual words
+
+    if (!searchWords || searchWords.length === 0) return result;
+
+    Object.entries(obj).forEach(([key, value]) => {
+      const isNestedObject = typeof value === "object" && value !== null;
+
+      // Ensure the key and value are strings for comparison
+      const keyString = key?.toLowerCase() || ""; // Fallback to empty string if undefined
+      const valueString = value?.toString().toLowerCase() || ""; // Fallback to empty string if undefined
+
+      // Check if any search word matches the key or value
+      const keyMatches = searchWords.some((word) => keyString.includes(word));
+      const valueMatches = searchWords.some((word) => valueString.includes(word));
+
+      if (isNestedObject) {
+        // Recursively process nested objects
+        result.push(...getHighlightedData(value));
+      } else if (keyMatches || valueMatches) {
+        // Add matches to the result
+        result.push({ key, value });
+      }
+    });
+
+    return result;
+  };
+
+..
+
+
 const highlightText = (text) => {
   if (!searchTerm || typeof text !== "string") return text;
 
