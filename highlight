@@ -1,3 +1,37 @@
+import SearchData from './SearchData';
+import SearchQuery from './SearchQuery';
+import {useState} from "react";
+import "./Search.scss";
+
+
+
+
+
+function Search() {
+    const [data, setData] = useState([]);
+    const [term, setTerm] = useState([]);
+    const [schema, setSchema] = useState('');
+    const [totalCount, setTotalCount] = useState(0);
+    
+    
+    return (
+        <div class ="main">
+        <SearchQuery setData={setData} setTerm={setTerm} setSchema={setSchema} setTotalCount={setTotalCount}/>
+        <SearchData data={data} term={term} totalCount={totalCount}/>
+        
+     
+        </div>
+
+    );
+
+}
+
+export default Search;
+
+
+
+
+
 const renderTree = (data, path = "") => {
   return Object.entries(data).map(([key, value]) => {
     const nodePath = path ? `${path}.${key}` : key;
