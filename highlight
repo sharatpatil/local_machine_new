@@ -1,3 +1,5 @@
+ <div className="bpsi">BPSI  <text className="bpsi-title">Smart  </text>  <PolicyIcon  /></div> 
+
 const getHighlightedData = (obj) => {
   const result = [];
   const searchWords = searchTerm
