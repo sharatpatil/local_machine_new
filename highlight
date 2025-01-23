@@ -2,6 +2,46 @@ const highlightText = (text) => {
   if (!searchTerm || typeof text !== "string") return text;
 
   // Escape special characters in the searchTerm
+  const escapeRegExp = (str) =>
+    str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters
+
+  const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+  const reversedSearchTerm = escapeRegExp([...searchTerm.trim()].reverse().join(""));
+
+  // Create regex to match both the search term and its reversed version
+  const regex = new RegExp(`(${escapedSearchTerm}|${reversedSearchTerm})`, "gi");
+
+  // Split text into parts using the regex
+  const parts = text.split(regex);
+
+  // Highlight the matching parts
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+          borderRadius: "2px",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
+
+///////////////////////////////////
+
+
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Escape special characters in the searchTerm
   const escapedSearchTerm = escapeRegExp(searchTerm.trim());
 
   // Reverse the search term
