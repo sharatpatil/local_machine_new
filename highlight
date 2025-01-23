@@ -1,3 +1,8 @@
+  Line 93:19:   'isExpanded' is not defined  no-undef
+  Line 111:16:  'Collapse' is not defined    react/jsx-no-undef
+  Line 111:29:  'isExpanded' is not defined  no-undef
+
+
 const renderTree = (data, path = "") => {
   return Object.entries(data).map(([key, value]) => {
     const nodePath = path ? `${path}.${key}` : key;
