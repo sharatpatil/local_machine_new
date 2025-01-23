@@ -1,4 +1,44 @@
+const getHighlightedData = (obj) => {
+  const result = [];
+  const searchWords = searchTerm
+    ?.toLowerCase()
+    .trim()
+    .split(/\s+/); // Split the search term into individual words
 
+  if (!searchWords || searchWords.length === 0) return result;
+
+  // Generate reversed words for each search term
+  const reversedSearchWords = searchWords.map((word) =>
+    word.split("").reverse().join("")
+  );
+
+  // Combine original and reversed search terms
+  const allSearchWords = [...searchWords, ...reversedSearchWords];
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const isNestedObject = typeof value === "object" && value !== null;
+
+    // Ensure the key and value are strings for comparison
+    const keyString = key?.toLowerCase() || ""; // Fallback to empty string if undefined
+    const valueString = value?.toString().toLowerCase() || ""; // Fallback to empty string if undefined
+
+    // Check if any search word matches the key or value
+    const keyMatches = allSearchWords.some((word) => keyString.includes(word));
+    const valueMatches = allSearchWords.some((word) => valueString.includes(word));
+
+    if (isNestedObject) {
+      // Recursively process nested objects
+      result.push(...getHighlightedData(value));
+    } else if (keyMatches || valueMatches) {
+      // Add matches to the result
+      result.push({ key, value });
+    }
+  });
+
+  return result;
+};
+
+/////////////////
   const getHighlightedData = (obj) => {
     const result = [];
     const searchWords = searchTerm
