@@ -1,4 +1,69 @@
-  Line 45:33:  'escapeRegExp' is not defined  no-undef
+
+const renderTree = (data, path = "") => {
+  return Object.entries(data).map(([key, value]) => {
+    const nodePath = path ? `${path}.${key}` : key;
+    const isExpandable = typeof value === "object" && value !== null;
+    const isExpanded = expandedNodes[nodePath] || false;
+    const matchesSearch = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return (
+      <Box key={nodePath} sx={{ ml: 2, mt: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            cursor: isExpandable ? "pointer" : "default",
+            backgroundColor: matchesSearch ? "#e0f7fa" : "transparent", // Highlight area
+            padding: "5px",
+            borderRadius: "5px",
+            transition: "background-color 0.2s",
+          }}
+          onClick={() => isExpandable && toggleNode(nodePath)}
+        >
+          {isExpandable ? (
+            isExpanded ? (
+              <ExpandMoreIcon sx={{ fontSize: 16, mr: 1 }} />
+            ) : (
+              <ChevronRightIcon sx={{ fontSize: 16, mr: 1 }} />
+            )
+          ) : (
+            <Box sx={{ width: 16, mr: 1 }} />
+          )}
+          <Typography
+            component="span"
+            sx={{
+              fontWeight: isExpandable ? "bold" : "normal",
+              color: matchesSearch ? "#00796b" : "#000",
+            }}
+          >
+            {highlightText(key)}:
+          </Typography>
+          {!isExpandable && (
+            <Typography
+              component="span"
+              sx={{
+                ml: 1,
+                color: "gray",
+                fontFamily: "monospace",
+                wordBreak: "break-word",
+              }}
+            >
+              {highlightText(String(value))}
+            </Typography>
+          )}
+        </Box>
+        {isExpandable && isExpanded && (
+          <Box sx={{ ml: 2 }}>{renderTree(value, nodePath)}</Box>
+        )}
+      </Box>
+    );
+  });
+};
+
+
+
+
+Line 45:33:  'escapeRegExp' is not defined  no-undef
   Line 46:66:  'escapeRegExp' is not defined  no-undef
 
 
