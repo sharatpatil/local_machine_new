@@ -1,3 +1,54 @@
+import { Card, CardContent, Box, IconButton } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+function CardViewWithIcons() {
+  return (
+    <Card
+      sx={{
+        width: 300, // Set card width
+        height: 200, // Set card height
+        position: "relative", // Make the card a positioned container
+        boxShadow: 3, // Optional shadow
+        borderRadius: 2, // Optional rounded corners
+        padding: 2, // Optional padding
+      }}
+    >
+      <CardContent>
+        {/* Card content goes here */}
+        <p>This is some content inside the card.</p>
+      </CardContent>
+
+      {/* Icons aligned to the bottom-right corner */}
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: 8, // Offset from bottom
+          right: 8, // Offset from right
+          display: "flex",
+          flexDirection: "row",
+          gap: 1, // Spacing between icons
+        }}
+      >
+        <IconButton onClick={() => console.log("Clicked visibility")}>
+          <VisibilityIcon sx={{ color: "grey" }} />
+        </IconButton>
+        <IconButton onClick={() => console.log("Clicked visibility")}>
+          <VisibilityIcon sx={{ color: "grey" }} />
+        </IconButton>
+        <IconButton onClick={() => console.log("Clicked visibility")}>
+          <VisibilityIcon sx={{ color: "grey" }} />
+        </IconButton>
+      </Box>
+    </Card>
+  );
+}
+
+export default CardViewWithIcons;
+
+
+////////////////////////////////
+
+
 <Box
   sx={{
     position: "absolute",
