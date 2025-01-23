@@ -1,3 +1,80 @@
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="json-modal"
+        aria-describedby="json-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "600px",
+            bgcolor: "background.paper",
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            boxShadow: 24,
+            p: 4,
+            maxHeight: "80%",
+            overflowY: "auto",
+          }}
+        >
+          <Typography
+            id="json-modal"
+            variant="h6"
+            component="h2"
+            sx={{ textAlign: "center", marginBottom: "20px", color: "#3f51b5" }}
+          >
+            JSON Viewer
+          </Typography>
+
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
+            label="Filter JSON"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            sx={{
+              marginBottom: "20px",
+            }}
+          />
+
+          {/* <RichTreeView
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpandIcon={<ChevronRightIcon />}
+            sx={{ flexGrow: 1, overflowY: "auto" }}
+          > */}
+            {renderJSON(item)}
+          {/* </RichTreeView> */}
+
+          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+            <button
+              onClick={() => setModalOpen(false)}
+              style={{
+                backgroundColor: "#3f51b5",
+                color: "#fff",
+                padding: "10px 20px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Close
+            </button>
+          </Box>
+        </Box>
+      </Modal>
+
+
+
+
+
+
+
+
 .icon-button-right {
   margin-left: auto; /* Pushes the button to the far right */
   display: flex;     /* Ensures alignment if used in a flex container */
