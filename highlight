@@ -1,3 +1,7 @@
+<JsonModal modalOpen={modalOpen} setModalOpen={setModalOpen} item={sampleData} />
+
+
+
 import React, { useState, useEffect } from "react";
 import {
   Modal,
