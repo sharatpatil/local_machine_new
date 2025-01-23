@@ -1,3 +1,72 @@
+const renderTree = (data, path = "") => {
+  return Object.entries(data).map(([key, value]) => {
+    const nodePath = path ? `${path}.${key}` : key;
+    const isExpandable = typeof value === "object" && value !== null;
+    const matchesSearchKey = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearchValue = searchTerm && JSON.stringify(value).toLowerCase().includes(searchTerm.toLowerCase());
+    const highlightKey = highlightText(key);  // Function to highlight search term in the key
+    const highlightValue = highlightText(String(value));  // Function to highlight search term in the value
+
+    return (
+      <Box key={nodePath} sx={{ ml: 2, mt: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            cursor: isExpandable ? "pointer" : "default",
+            backgroundColor: matchesSearchKey || matchesSearchValue ? "#e0f7fa" : "transparent",  // Highlight area
+            padding: "5px",
+            borderRadius: "5px",
+            transition: "background-color 0.2s",
+          }}
+          onClick={() => isExpandable && toggleNode(nodePath)}
+        >
+          {isExpandable ? (
+            expandedNodes[nodePath] ? (
+              <ExpandMoreIcon sx={{ fontSize: 16, mr: 1 }} />
+            ) : (
+              <ChevronRightIcon sx={{ fontSize: 16, mr: 1 }} />
+            )
+          ) : (
+            <Box sx={{ width: 16, mr: 1 }} />
+          )}
+          <Typography
+            component="span"
+            sx={{
+              fontWeight: isExpandable ? "bold" : "normal",
+              color: matchesSearchKey ? "#00796b" : matchesSearchValue ? "#00796b" : "#000",
+            }}
+          >
+            {highlightKey}:  {/* Highlighted Key */}
+          </Typography>
+          {!isExpandable && (
+            <Typography
+              component="span"
+              sx={{
+                ml: 1,
+                color: "gray",
+                fontFamily: "monospace",
+                wordBreak: "break-word",
+              }}
+            >
+              {highlightValue}  {/* Highlighted Value */}
+            </Typography>
+          )}
+        </Box>
+        {isExpandable && (matchesSearchKey || matchesSearchValue) && (
+          <Collapse in={expandedNodes[nodePath]}>
+            <Box sx={{ ml: 2 }}>{renderTree(value, nodePath)}</Box>
+          </Collapse>
+        )}
+      </Box>
+    );
+  });
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
 import React, { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
