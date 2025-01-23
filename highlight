@@ -1,5 +1,66 @@
 import SearchData from './SearchData';
 import SearchQuery from './SearchQuery';
+import { useState } from "react";
+import "./Search.scss";
+
+function Search() {
+    const [data, setData] = useState([]);
+    const [term, setTerm] = useState([]);
+    const [schema, setSchema] = useState('');
+    const [totalCount, setTotalCount] = useState(0);
+
+    return (
+        <div className="main">
+            <div className="search-query-container">
+                <SearchQuery 
+                    setData={setData} 
+                    setTerm={setTerm} 
+                    setSchema={setSchema} 
+                    setTotalCount={setTotalCount} 
+                />
+            </div>
+            <div className="search-data-container">
+                <SearchData 
+                    data={data} 
+                    term={term} 
+                    totalCount={totalCount} 
+                />
+            </div>
+        </div>
+    );
+}
+
+export default Search;
+
+
+
+
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full height */
+  overflow: hidden; /* Prevent overall scroll */
+}
+
+.search-query-container {
+  flex: 0 0 auto; /* Fixed height */
+  max-height: 30%; /* Adjust as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.search-data-container {
+  flex: 1 1 auto; /* Remaining space for data */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px;
+}
+
+/////////////////////////////////////////////////////////
+
+import SearchData from './SearchData';
+import SearchQuery from './SearchQuery';
 import {useState} from "react";
 import "./Search.scss";
 
