@@ -1,4 +1,12 @@
-   <IconButton >
+.icon-button-right {
+  margin-left: auto; /* Pushes the button to the far right */
+  display: flex;     /* Ensures alignment if used in a flex container */
+  align-items: center;
+}
+
+
+
+<IconButton >
             <VisibilityIcon sx={{ color: "grey" , }} />
       </IconButton>
 
