@@ -3,6 +3,59 @@ const renderTree = (data, path = "") => {
     const nodePath = path ? `${path}.${key}` : key;
     const isExpandable = typeof value === "object" && value !== null;
     const matchesSearch = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return (
+      <Box key={nodePath}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            cursor: isExpandable ? "pointer" : "default",
+            backgroundColor: matchesSearch ? "#e0f7fa" : "transparent", // Highlight area
+            padding: "5px",
+            borderRadius: "5px",
+            transition: "background-color 0.2s",
+          }}
+          onClick={() => isExpandable && toggleNode(nodePath)}
+        >
+          {isExpandable ? (
+            isExpanded[nodePath] ? (
+              <ExpandMoreIcon sx={{ fontSize: 16, mr: 1 }} />
+            ) : (
+              <ChevronRightIcon sx={{ fontSize: 16, mr: 1 }} />
+            )
+          ) : (
+            <Box sx={{ width: 16, mr: 1 }} />
+          )}
+          <Typography
+            component="span"
+            sx={{
+              fontWeight: isExpandable ? "bold" : "normal",
+              color: matchesSearch ? "#00796b" : "#000",
+            }}
+          >
+            {highlightText(key)}:
+          </Typography>
+        </Box>
+        <Collapse in={isExpanded[nodePath] || matchesSearch}>
+          <Box sx={{ ml: 2 }}>
+            {!isExpandable && <Typography sx={{ color: "gray", fontFamily: "monospace" }}>{highlightText(String(value))}</Typography>}
+            {isExpandable && renderTree(value, nodePath)}
+          </Box>
+        </Collapse>
+      </Box>
+    );
+  });
+};
+
+
+
+
+const renderTree = (data, path = "") => {
+  return Object.entries(data).map(([key, value]) => {
+    const nodePath = path ? `${path}.${key}` : key;
+    const isExpandable = typeof value === "object" && value !== null;
+    const matchesSearch = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase());
     const highlightKey = highlightText(key);  // Function to highlight search term in the key
 
     return (
