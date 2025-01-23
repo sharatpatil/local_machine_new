@@ -1,3 +1,7 @@
+  Line 45:33:  'escapeRegExp' is not defined  no-undef
+  Line 46:66:  'escapeRegExp' is not defined  no-undef
+
+
 function JsonModal({ modalOpen, setModalOpen, item, searchTerm }) {
   const [expandedNodes, setExpandedNodes] = useState({});
 
