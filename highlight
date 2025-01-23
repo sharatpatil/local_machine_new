@@ -1,3 +1,17 @@
+   <Box style={{display:"flex", flexDirection:'row', alignItems:'flex-end'}}> 
+          <IconButton onClick={() => setModalOpen(true)}>
+            <VisibilityIcon sx={{ color: "grey" }} />
+          </IconButton>
+          <IconButton onClick={() => setModalOpen(true)}>
+            <VisibilityIcon sx={{ color: "grey" }} />
+          </IconButton>
+          <IconButton onClick={() => setModalOpen(true)}>
+            <VisibilityIcon sx={{ color: "grey" }} />
+          </IconButton>
+          </Box>
+
+
+
 import SearchData from './SearchData';
 import SearchQuery from './SearchQuery';
 import { useState } from "react";
