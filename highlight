@@ -1,3 +1,48 @@
+
+  const highlightText = (text) => {
+    if (!searchTerm || typeof text !== "string") return text;
+  
+    // Escape special characters in the searchTerm
+    const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+  
+    // Reverse the search term
+    const reversedSearchTerm = [...escapedSearchTerm].reverse().join("");
+  
+    // Create regex to match both the search term and its reversed version
+    const regex = new RegExp(`(${escapedSearchTerm}|${reversedSearchTerm})`, "gi");
+  
+    // Split text into parts using the regex
+    const parts = text.split(regex);
+  
+
+    console.log(parts)
+    // Map through parts and highlight matches
+    return parts.map((part, index) =>
+      regex.test(part) ? (
+        <span
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            fontWeight: "bold",
+            borderRadius: "2px",
+          }}
+        >
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+
+
+
+.,.,.,.
+
+
+
+
 const getHighlightedData = (obj) => {
   const result = [];
   const searchWords = searchTerm
