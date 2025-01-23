@@ -9,6 +9,154 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { TreeView, TreeItem } from "@mui/x-tree-view";
+
+function JsonModal({ modalOpen, setModalOpen, item }) {
+  // Recursive function to render Tree Items
+  const renderTree = (data, parentId = "root") => {
+    return Object.keys(data).map((key, index) => {
+      const value = data[key];
+      const id = `${parentId}-${key}-${index}`; // Generate unique `id`
+
+      if (typeof value === "object" && value !== null) {
+        // Render nested objects or arrays
+        return (
+          <TreeItem key={id} id={id} nodeId={id} label={key}>
+            {renderTree(value, id)}
+          </TreeItem>
+        );
+      }
+
+      // Render leaf node for primitive values
+      return (
+        <TreeItem
+          key={id}
+          id={id}
+          nodeId={id}
+          label={`${key}: ${value}`}
+        />
+      );
+    });
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(JSON.stringify(item, null, 2));
+    alert("JSON copied to clipboard!");
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([JSON.stringify(item, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "domain-json.json";
+    link.click();
+  };
+
+  return (
+    <Modal
+      open={modalOpen}
+      onClose={() => setModalOpen(false)}
+      aria-labelledby="json-modal"
+      aria-describedby="json-modal-description"
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "600px",
+          bgcolor: "background.paper",
+          border: "1px solid #ddd",
+          borderRadius: "10px",
+          boxShadow: 24,
+          p: 4,
+          maxHeight: "80%",
+          overflowY: "auto",
+        }}
+      >
+        {/* Modal Header */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography
+            id="json-modal"
+            variant="h6"
+            component="h2"
+            sx={{ color: "#3f51b5" }}
+          >
+            Domain JSON Viewer
+          </Typography>
+          <Box>
+            <Tooltip title="Copy JSON">
+              <IconButton onClick={handleCopy}>
+                <ContentCopyIcon sx={{ color: "#3f51b5" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Download JSON">
+              <IconButton onClick={handleDownload}>
+                <FileDownloadIcon sx={{ color: "#3f51b5" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Close">
+              <IconButton onClick={() => setModalOpen(false)}>
+                <CloseIcon sx={{ color: "#3f51b5" }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Box>
+
+        {/* TreeView Content */}
+        <Box
+          sx={{
+            bgcolor: "#f5f5f5",
+            padding: "10px",
+            borderRadius: "5px",
+            maxHeight: "400px",
+            overflowY: "auto",
+            border: "1px solid #ddd",
+          }}
+        >
+          <TreeView
+            defaultCollapseIcon={<CloseIcon />}
+            defaultExpandIcon={<FileDownloadIcon />}
+            sx={{
+              flexGrow: 1,
+              overflowY: "auto",
+              fontFamily: "monospace",
+              fontSize: "14px",
+            }}
+          >
+            {renderTree(item)}
+          </TreeView>
+        </Box>
+      </Box>
+    </Modal>
+  );
+}
+
+export default JsonModal;
+
+////////////////////////////////////////////////////////
+
+
+import React from "react";
+import {
+  Modal,
+  Box,
+  IconButton,
+  Typography,
+  Tooltip,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { TreeView, TreeItem } from "@mui/lab";
 
 function JsonModal({ modalOpen, setModalOpen, item }) {
