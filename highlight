@@ -1,3 +1,89 @@
+import React, { useState } from 'react';
+import { Box, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+// Import Collapse from MUI X
+import Collapse from '@mui/material/Collapse';
+
+
+const [expandedNodes, setExpandedNodes] = useState({});
+
+const toggleNode = (path) => {
+  setExpandedNodes((prevExpandedNodes) => ({
+    ...prevExpandedNodes,
+    [path]: !prevExpandedNodes[path],
+  }));
+};
+
+
+
+const renderTree = (data, path = "") => {
+  return Object.entries(data).map(([key, value]) => {
+    const nodePath = path ? `${path}.${key}` : key;
+    const isExpandable = typeof value === "object" && value !== null;
+    const matchesSearch = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase());
+    const highlightKey = highlightText(key);  // Function to highlight search term in the key
+
+    return (
+      <Box key={nodePath} sx={{ ml: 2, mt: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            cursor: isExpandable ? "pointer" : "default",
+            backgroundColor: matchesSearch ? "#e0f7fa" : "transparent",  // Highlight area
+            padding: "5px",
+            borderRadius: "5px",
+            transition: "background-color 0.2s",
+          }}
+          onClick={() => isExpandable && toggleNode(nodePath)}
+        >
+          {isExpandable ? (
+            expandedNodes[nodePath] ? (
+              <ExpandMoreIcon sx={{ fontSize: 16, mr: 1 }} />
+            ) : (
+              <ChevronRightIcon sx={{ fontSize: 16, mr: 1 }} />
+            )
+          ) : (
+            <Box sx={{ width: 16, mr: 1 }} />
+          )}
+          <Typography
+            component="span"
+            sx={{
+              fontWeight: isExpandable ? "bold" : "normal",
+              color: matchesSearch ? "#00796b" : "#000",
+            }}
+          >
+            {highlightKey}:  {/* Highlighted Key */}
+          </Typography>
+          {!isExpandable && (
+            <Typography
+              component="span"
+              sx={{
+                ml: 1,
+                color: "gray",
+                fontFamily: "monospace",
+                wordBreak: "break-word",
+              }}
+            >
+              {highlightText(String(value))}  {/* Highlighted Value */}
+            </Typography>
+          )}
+        </Box>
+        {isExpandable && (
+          <Collapse in={expandedNodes[nodePath]}>
+            <Box sx={{ ml: 2 }}>{renderTree(value, nodePath)}</Box>
+          </Collapse>
+        )}
+      </Box>
+    );
+  });
+};
+
+/////////////////////////////////////////
+
+
+
 const [expandedNodes, setExpandedNodes] = useState({});
 
 const toggleNode = (nodePath) => {
