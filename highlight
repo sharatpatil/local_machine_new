@@ -1,4 +1,97 @@
- <div className="bpsi">BPSI  <text className="bpsi-title">Smart  </text>  <PolicyIcon  /></div> 
+
+import './Navbar.scss';
+import 'font-awesome/css/font-awesome.min.css';
+import PolicyIcon from '@mui/icons-material/Policy';
+
+function Navbar() {
+  return (
+    <div className="navBar">
+      <div />
+      <img className="logo" src="Images/sc-logo.svg" alt="Logo" />
+      <div className="bpsi">
+        <span className="bpsi-text">BPSI</span>
+        <span className="bpsi-title">Smart</span>
+        <PolicyIcon className="bpsi-icon" />
+      </div>
+      <div className="user">
+        <span className="user-icon">
+          {/* <i className="fas fa-user" /> */}
+          <div className="user-name">BPSI Team</div>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export default Navbar;
+
+
+
+@use '../../Colors.scss' as c;
+
+.navBar {
+  height: 60px;
+  width: 100%;
+  background-image: linear-gradient(to right, #00008B, #0096FF);
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.bpsi {
+  display: flex;
+  align-items: center; /* Align icon and text vertically */
+  color: #0FFF50;
+  margin-top: 10px;
+  margin-left: 20px;
+  flex-grow: 1; /* Push the "user" section to the right */
+}
+
+.bpsi-text {
+  font-size: medium;
+  margin-right: 5px;
+}
+
+.bpsi-title {
+  font-size: bold;
+  color: #fff;
+  margin-right: 5px;
+}
+
+.bpsi-icon {
+  color: #fff;
+  font-size: 20px; /* Adjust the icon size to match text */
+}
+
+.user {
+  display: flex;
+  align-items: center; /* Align "user" section items vertically */
+  float: right;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.user-name {
+  color: white;
+  font-size: medium;
+}
+
+.user-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: white;
+}
+
+
+////////////////////
+
+<div className="bpsi">BPSI  <text className="bpsi-title">Smart  </text>  <PolicyIcon  /></div> 
 
 const getHighlightedData = (obj) => {
   const result = [];
