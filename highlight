@@ -1,4 +1,15 @@
-  Line 93:19:   'isExpanded' is not defined  no-undef
+const [expandedNodes, setExpandedNodes] = useState({});
+
+const toggleNode = (nodePath) => {
+  setExpandedNodes((prevState) => ({
+    ...prevState,
+    [nodePath]: !prevState[nodePath],
+  }));
+};
+
+
+
+Line 93:19:   'isExpanded' is not defined  no-undef
   Line 111:16:  'Collapse' is not defined    react/jsx-no-undef
   Line 111:29:  'isExpanded' is not defined  no-undef
 
