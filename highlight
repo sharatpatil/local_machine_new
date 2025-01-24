@@ -1,3 +1,8 @@
+
+const regex = new RegExp(`(${allWords.join("|")})`, "gi");
+
+
+
 app.get('/multi_word_count', async (req, res) => {
   const { term = '', schema } = req.query;
 
