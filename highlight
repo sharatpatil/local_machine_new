@@ -1,3 +1,122 @@
+
+app.get('/multi_word_search1', async (req, res) => {
+  const { term = '', page = 1, limit = 100, schema } = req.query;
+  const offset = (page - 1) * limit;
+
+  // Create a unique cache key based on query parameters
+  const cacheKey = `multi_search:${term}:page:${page}:limit:${limit}:schema:${schema}`;
+
+  try {
+    // Check if the result is already in the cache
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      return res.json({ source: 'cache', highlight: term, count: cachedData.length, data: cachedData });
+    }
+
+    // Split the term into words
+    const words = term.split(/\s+/).filter(Boolean); // Split by spaces and remove empty strings
+
+    if (words.length === 0) {
+      return res.status(400).json({ error: 'Search term cannot be empty.' });
+    }
+
+    // Construct search query dynamically with :*
+    const searchQuery = words
+      .map((_, index) => `document_vector @@ to_tsquery('simple', $${index + 1} || ':*')`)
+      .join(' AND ');
+
+    const query = `
+      SELECT data
+      FROM ${schema}
+      WHERE ${searchQuery}
+      LIMIT $${words.length + 1} OFFSET $${words.length + 2};
+    `;
+
+    console.log(query)
+    // Prepare parameter values
+    const values = [...words, parseInt(limit), parseInt(offset)];
+
+    console.log('Fetching from database');
+    const { rows } = await pool.query(query, values);
+
+    // Store the result in cache
+    cache.set(cacheKey, rows);
+
+    res.json({ source: 'database', highlight: term, count: rows.length, data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.get('/multi_word_count', async (req, res) => {
+  const { term = '', schema } = req.query;
+
+  try {
+    // Validate the schema and term
+    if (!schema) {
+      return res.status(400).json({ error: 'Schema is required.' });
+    }
+
+    // Split the term into words and filter out empty strings
+    const words = term.split(/\s+/).filter(Boolean);
+
+    if (words.length === 0) {
+      return res.status(400).json({ error: 'Search term cannot be empty.' });
+    }
+
+    // Generate a unique cache key based on the search term and schema
+    const cacheKey = `multi_word_count:${term}:schema:${schema}`;
+
+    // Check if the result is already cached
+    const cachedCount = cache.get(cacheKey);
+    if (cachedCount) {
+      console.log('Serving count from cache');
+      return res.json({ source: 'cache', ...cachedCount });
+    }
+
+    // Construct search condition dynamically with :*
+    const searchCondition = words
+      .map((_, index) => `document_vector @@ to_tsquery('simple', $${index + 1} || ':*')`)
+      .join(' AND ');
+
+    // Prepare parameter values
+    const values = words;
+
+    console.log('Fetching total count from database');
+
+    // First query: Get total count for the search condition
+    const countQuery = `
+      SELECT COUNT(identity) AS totalCount
+      FROM ${schema}
+      WHERE ${searchCondition};
+    `;
+    const countResult = await pool.query(countQuery, values);
+    const totalCount = parseInt(countResult.rows[0]?.totalcount || 0, 10);
+
+    // Second query: Get total count of all rows in the schema
+    const countQuery1 = `
+      SELECT COUNT(data) AS totalCount1
+      FROM ${schema};
+    `;
+    const countResult1 = await pool.query(countQuery1);
+    const totalCount1 = parseInt(countResult1.rows[0]?.totalcount1 || 0, 10);
+
+    // Cache the result for future requests (e.g., 5 minutes = 300 seconds)
+    const cachedResult = { totalCount, totalCount1 };
+    cache.set(cacheKey, cachedResult, 300);
+
+    res.json(cachedResult);
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+////////
+
+
 WITH combined_data AS (
     SELECT data FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1 WHERE document_vector @@ to_tsquery('simple', 'leid:*')
     UNION ALL
