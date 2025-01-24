@@ -1,3 +1,69 @@
+
+app.get('/multi_word_count', async (req, res) => {
+  const { term = '', schema } = req.query;
+
+  try {
+    // Split the term into words
+    const words = term.split(/\s+/).filter(Boolean);
+
+    if (words.length === 0) {
+      return res.status(400).json({ error: 'Search term cannot be empty.' });
+    }
+
+        // Generate a unique cache key based on the search term and schema
+        const cacheKey = `multi_word_count:${term}:schema:${schema}`;
+
+        // Check if the result is already cached
+        const cachedCount = cache.get(cacheKey);
+        if (cachedCount !== undefined) {
+          console.log('Serving count from cache');
+          return res.json({ source: 'cache', totalCount: cachedCount });
+        }
+
+        
+
+    // Construct search condition dynamically with :*
+    const searchCondition = words
+      .map((_, index) => `document_vector @@ to_tsquery('simple', $${index + 1} || ':*')`)
+      .join(' AND ');
+
+    // Prepare parameter values
+    const values = words;
+
+    console.log('Fetching total count from database');
+    const countQuery = `
+      SELECT COUNT(identity) AS totalCount
+      FROM ${schema}
+      WHERE ${searchCondition};
+    `;
+    const countResult = await pool.query(countQuery, values);
+
+      
+    const totalCount = parseInt(countResult.rows[0].totalcount, 10);
+
+    const countQuery1 = `
+    SELECT COUNT(data) AS totalCount1
+    FROM ${schema}
+  `;
+  const countResult1 = await pool.query(countQuery1, values);
+
+    
+  const totalCount1 = parseInt(countResult1.rows[0].totalCount1, 10);
+
+        // Cache the result for future requests
+        cache.set(cacheKey, totalCount,totalCount1); // Cache for 5 minutes (300 seconds)
+
+    res.json({ totalCount,totalCount1 });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+///////////////
+
+
 const highlightText = (text) => {
   if (!searchTerm || typeof text !== "string") return text;
 
