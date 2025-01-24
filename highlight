@@ -1,3 +1,12 @@
+
+const regexPrefix = '(\b'+${allWords.join(")|(\b")}+')';
+    const regexPostfix = '('+${allWords.join("\b)|(")}+'\b)';
+    
+    const regex = new RegExp(`(${allWords.join("|")})\\b`, "gi");
+
+
+
+
 SQL Error [54000]: ERROR: string is too long for tsvector (1190206 bytes, max 1048575 bytes)
 
 Error position:
