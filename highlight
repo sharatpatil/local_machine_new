@@ -1,3 +1,41 @@
+
+const highlightText = (text) => {
+  if (!searchTerm || typeof text !== "string") return text;
+
+  // Escape special characters in the searchTerm and create regex for multiple words
+  const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+  const words = escapedSearchTerm.split(/\s+/).map((word) => escapeRegExp(word)); // Split into words
+
+  // Generate regex for both word boundaries (\bword and word\b)
+  const regexPattern = words
+    .map((word) => `(\b${word})|(${word}\b)`) // Create patterns for both start and end
+    .join("|");
+
+  // Create a single regex for all words
+  const regex = new RegExp(regexPattern, "gi");
+
+  // Split text into parts using the regex
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        style={{
+          backgroundColor: "#ffe58a",
+          fontWeight: "bold",
+          borderRadius: "2px",
+        }}
+      >
+        {part}
+      </span>
+    ) : (
+        part
+      )
+  );
+};
+
+
 (\bkey)|(\baddr)|(key\b)|(addr\b)|(\bear)|(ear\b)
 
 
