@@ -1,3 +1,6 @@
+(\bkey)|(\baddr)|(key\b)|(addr\b)|(\bear)|(ear\b)
+
+
 
 const regexPrefix = '(\b'+${allWords.join(")|(\b")}+')';
     const regexPostfix = '('+${allWords.join("\b)|(")}+'\b)';
