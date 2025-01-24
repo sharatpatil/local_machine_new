@@ -1,3 +1,31 @@
+WITH combined_data AS (
+    SELECT data FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1 WHERE document_vector @@ to_tsquery('simple', 'leid:*')
+    UNION ALL
+    SELECT data FROM bpsi_intv_iglfamvkbhs8bixcmznfvukw WHERE document_vector @@ to_tsquery('simple', 'leid:*')
+)
+SELECT * FROM combined_data
+LIMIT 50 OFFSET 3;
+
+
+
+SELECT data FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1 
+WHERE document_vector @@ to_tsquery('simple', 'leid:*')
+
+UNION ALL
+
+SELECT data FROM bpsi_intv_iglfamvkbhs8bixcmznfvukw
+WHERE document_vector @@ to_tsquery('simple', 'leid:*')
+
+ORDER BY data  -- Optional sorting
+LIMIT 50 OFFSET 3;
+
+
+
+.....
+
+
+
+
 
      SELECT data 
       FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1 and bpsi_intv_iglfamvkbhs8bixcmznfvukw
