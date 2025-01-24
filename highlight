@@ -1,3 +1,6 @@
+const regex = new RegExp(`\\b(${allWords.join("|")})\\b`, "gi");
+.
+
 
 const regex = new RegExp(`(${allWords.join("|")})`, "gi");
 
