@@ -1,3 +1,11 @@
+SQL Error [54000]: ERROR: string is too long for tsvector (1190206 bytes, max 1048575 bytes)
+
+Error position:
+
+UPDATE bpsi.bpsi_intv_d73052ddfb7dce80198c323e SET document_vector = to_tsvector('simple', data::text || ' ' || reverse(data::text));
+
+
+
 const regex = new RegExp(`\\b(${allWords.join("|")})\\b`, "gi");
 .
 
