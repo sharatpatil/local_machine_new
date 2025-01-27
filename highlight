@@ -1,3 +1,73 @@
+const { Pool } = require('pg');
+const NodeCache = require('node-cache');
+
+const pool = new Pool({
+  user: 'your_user',
+  host: 'your_host',
+  database: 'your_db',
+  password: 'your_password',
+  port: 5432,
+  max: 20, // Increased pool size
+  idleTimeoutMillis: 30000, // Close idle connections after 30s
+  connectionTimeoutMillis: 2000, // Timeout if no connection in 2s
+});
+
+const cache = new NodeCache({ stdTTL: 300 }); // Cache for 5 minutes
+
+app.get('/multi_word_search', async (req, res) => {
+  const { term = '', page = 1, limit = 100, schema } = req.query;
+  const offset = (page - 1) * limit;
+
+  // Cache key
+  const cacheKey = `multi_search:${term}:page:${page}:limit:${limit}:schema:${schema}`;
+
+  try {
+    // Check cache first
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      return res.json({ source: 'cache', count: cachedData.length, data: cachedData });
+    }
+
+    // Split search term into words
+    const words = term.split(/\s+/).filter(Boolean);
+    if (words.length === 0) {
+      return res.status(400).json({ error: 'Search term cannot be empty.' });
+    }
+
+    // Ensure index is used (Run `CREATE INDEX idx_document_vector ON your_table USING GIN (document_vector);` in DB)
+    const searchQuery = words.map((_, i) => `document_vector @@ to_tsquery('simple', $${i + 1} || ':*')`).join(' AND ');
+
+    // Optimized query
+    const query = `
+      SELECT data
+      FROM ${schema}
+      WHERE ${searchQuery}
+      ORDER BY ts_rank(document_vector, to_tsquery('simple', $1)) DESC
+      LIMIT $${words.length + 1} OFFSET $${words.length + 2};
+    `;
+
+    const values = [...words, parseInt(limit), parseInt(offset)];
+
+    console.log('Fetching from database...');
+    const { rows } = await pool.query(query, values);
+
+    // Store in cache
+    cache.set(cacheKey, rows);
+
+    res.json({ source: 'database', count: rows.length, data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+mmmmmmmmm
+
 
 app.get('/multi_word_search_time', async (req, res) => {
   const { term = '', page = 1, limit = 100, schema } = req.query;
