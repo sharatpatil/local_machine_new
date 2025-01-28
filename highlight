@@ -1,3 +1,92 @@
+
+  const highlightText = (text) => {
+    if (!searchTerm || typeof text !== "string") return text;
+  
+    // Escape special characters in the searchTerm and create regex for multiple words
+    const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+    const words = escapedSearchTerm.split(/\s+/).map((word) => escapeRegExp(word)); // Split into words
+  
+    const allWords = words.flatMap((word) => [word, [...word].reverse().join("")]);
+
+    // Generate regex for both word boundaries (\bword and word\b)
+    const regexPattern = allWords
+      .map((word) => `(\\b${word})|(${word}\\b)`) // Create patterns for both start and end
+      .join("|");
+  
+    // Create a single regex for all words
+    const regex = new RegExp(regexPattern, "gi");
+    
+    // console.log(regex)
+    // Split text into parts using the regex
+    const parts = text.split(regex);
+  
+    return parts.map((part, index) =>
+      regex.test(part) ? (
+        <span
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            fontWeight: "bold",
+            borderRadius: "2px",
+          }}
+        >
+          {part}
+        </span>
+      ) : (
+          part
+        )
+    );
+  };
+
+
+
+  const getHighlightedData = (obj) => {
+    const result = [];
+    const searchWords = searchTerm
+      ?.toLowerCase()
+      .trim()
+      .split(/\s+/); // Split the search term into individual words
+  
+    if (!searchWords || searchWords.length === 0) return result;
+  
+    // Generate reversed words for each search term
+    const reversedSearchWords = searchWords.map((word) =>
+      word.split("").reverse().join("")
+    );
+  
+    // Combine original and reversed search terms
+    const allSearchWords = [...searchWords, ...reversedSearchWords];
+  
+    Object.entries(obj).forEach(([key, value]) => {
+      const isNestedObject = typeof value === "object" && value !== null;
+  
+      // Ensure the key and value are strings for comparison
+      const keyString = key?.toLowerCase() || ""; // Fallback to empty string if undefined
+      const valueString = value?.toString().toLowerCase() || ""; // Fallback to empty string if undefined
+  
+      // Check if any search word matches the key or value
+      const keyMatches = allSearchWords.some((word) => keyString.includes(word));
+      const valueMatches = allSearchWords.some((word) => valueString.includes(word));
+  
+      if (isNestedObject) {
+        // Recursively process nested objects
+        result.push(...getHighlightedData(value));
+      } else if (keyMatches || valueMatches) {
+        // Add matches to the result
+        result.push({ key, value });
+      }
+    });
+  
+    return result;
+  };
+
+  const highlightedData = getHighlightedData(item);
+
+  return (
+<Card code />
+)
+
+
 const { Pool } = require('pg');
 const NodeCache = require('node-cache');
 
