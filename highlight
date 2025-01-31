@@ -1,3 +1,58 @@
+const getHighlightedData = (obj, depth = 0, maxDepth = 3) => {
+  if (depth > maxDepth) return []; // Stop recursion at maxDepth
+
+  const result = [];
+  const searchWords = searchTerm?.toLowerCase().trim().split(/\s+/) || [];
+
+  if (searchWords.length === 0) return result;
+
+  // Create reversed words
+  const reversedSearchWords = searchWords.map((word) =>
+    word.split("").reverse().join("")
+  );
+
+  const allSearchWords = [...searchWords, ...reversedSearchWords];
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (typeof value === "object" && value !== null) {
+      result.push(...getHighlightedData(value, depth + 1, maxDepth)); // Pass depth
+    } else {
+      const keyString = key.toLowerCase();
+      const valueString = value?.toString().toLowerCase() || "";
+
+      const keyMatches = allSearchWords.some((word) => keyString.includes(word));
+      const valueMatches = allSearchWords.some((word) => valueString.includes(word));
+
+      if (keyMatches || valueMatches) {
+        result.push({ key, value });
+      }
+    }
+  });
+
+  return result;
+};
+
+
+
+const highlightedData = useMemo(() => getHighlightedData(item), [item, searchTerm]);
+
+
+import { debounce } from 'lodash';
+
+const [searchTerm, setSearchTerm] = useState('');
+
+const debouncedSetSearchTerm = useCallback(debounce((value) => {
+  setSearchTerm(value);
+}, 300), []);
+
+const handleSearchChange = (e) => {
+  debouncedSetSearchTerm(e.target.value);
+};
+
+
+0000000
+
+
 
   const highlightText = (text) => {
     if (!searchTerm || typeof text !== "string") return text;
