@@ -1,4 +1,36 @@
-  SELECT data
+app.get('/search', async (req, res) => {
+    const { limit = 50, offset = 0, table, terms } = req.query;
+
+    if (!table || !terms) {  // Check if table and terms are provided
+        return res.status(400).json({ error: 'Table name and search terms are required.' });
+    }
+
+    // Sanitize table name (important to prevent SQL injection!)
+    const safeTable = table.replace(/[^a-zA-Z0-9_]/g, ''); // Remove any characters that are not alphanumeric or underscore
+
+    // Dynamically build the search query
+    const searchTerms = terms.split(' ').map(term => `${term}:*`).join(' & '); // Split terms by space and add wildcard
+    const query = `
+        SELECT data
+        FROM ${safeTable}  -- Use the sanitized table name
+        WHERE document_vector @@ to_tsquery('simple', '${searchTerms}')
+        LIMIT $1 OFFSET $2;
+    `;
+
+    try {
+        const result = await client.query(query, [limit, offset]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error executing query:', err);
+        res.status(500).json({ error: 'An error occurred' });
+    }
+});
+
+
+
+
+
+SELECT data
       FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
       WHERE document_vector @@ to_tsquery('simple', 'leid:* & 343434:*' )
 --      order by event_timestamp 
