@@ -1,3 +1,11 @@
+  SELECT data
+      FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
+      WHERE document_vector @@ to_tsquery('simple', 'leid:* & 343434:*' )
+--      order by event_timestamp 
+      limit 50 offset 0; 
+     
+
+
 
 app.get('/multi_word_search1', async (req, res) => {
   const { term = '', page = 1, limit = 100, schema } = req.query;
