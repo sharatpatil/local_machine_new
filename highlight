@@ -1,4 +1,78 @@
+const compression = require('compression');
+const { Pool } = require('pg');
+const NodeCache = require('node-cache');
 
+const cache = new NodeCache({ stdTTL: 300, checkperiod: 120 }); // Cache with 5-minute TTL
+const pool = new Pool({
+  user: 'your_user',
+  host: 'your_host',
+  database: 'your_db',
+  password: 'your_password',
+  port: 5432,
+  max: 10, // 👈 Connection pool size
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+const app = require('express')();
+app.use(compression()); // Enable compression for large JSON responses
+
+app.get('/multi_word_search_plainto', async (req, res) => {
+  const { term = '', lastTimestamp, limit = 100, schema } = req.query;
+  if (!term) return res.status(400).json({ error: 'Search term cannot be empty.' });
+
+  const startTime = performance.now();
+  const cacheKey = `multi_search:${term}:last:${lastTimestamp}:limit:${limit}:schema:${schema}`;
+
+  try {
+    // 1️⃣ **Check cache first (Async to avoid blocking)**
+    const cachedData = await Promise.resolve(cache.get(cacheKey));
+    if (cachedData) {
+      console.log('✅ Serving from cache');
+      return res.json({
+        source: 'cache',
+        responseTime: `${((performance.now() - startTime) / 1000).toFixed(3)} seconds`,
+        highlight: term,
+        count: cachedData.length,
+        data: cachedData,
+      });
+    }
+
+    // 2️⃣ **Prepare search query safely**
+    const searchQuery = term.split(/\s+/).map((word) => `${word}:*`).join(' & ');
+
+    const query = `
+      SELECT data
+      FROM ${schema}
+      WHERE document_vector @@ to_tsquery('simple', $1)
+      ORDER BY event_timestamp
+      LIMIT $2;
+    `;
+
+    // 3️⃣ **Execute query with connection pooling**
+    const { rows } = await pool.query(query, [searchQuery, parseInt(limit)]);
+
+    // 4️⃣ **Store results in cache before sending response**
+    cache.set(cacheKey, rows);
+
+    const responseTime = ((performance.now() - startTime) / 1000).toFixed(3);
+    res.json({ source: 'database', responseTime: `${responseTime} seconds`, highlight: term, count: rows.length, data: rows });
+
+  } catch (error) {
+    console.error('❌ Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+00000000
 
 app.get('/multi_word_search_plainto', async (req, res) => {
   const { term = '', lastTimestamp, limit = 100, schema } = req.query;
