@@ -1,4 +1,52 @@
+app.get('/multi_word_search1', async (req, res) => {
+  const { term = '', lastTimestamp, limit = 100, schema } = req.query;
 
+  const startTime = performance.now();
+  const cacheKey = `multi_search:${term}:last:${lastTimestamp}:limit:${limit}:schema:${schema}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      const responseTime = ((performance.now() - startTime) / 1000).toFixed(3);
+      return res.json({ source: 'cache', responseTime: `(${responseTime} seconds)`, highlight: term, count: cachedData.length, data: cachedData });
+    }
+
+    const words = term.split(/\s+/).filter(Boolean);
+    if (words.length === 0) {
+      return res.status(400).json({ error: 'Search term cannot be empty.' });
+    }
+
+    const searchQuery = words
+      .map((_, index) => `document_vector @@ plainto_tsquery('simple', $${index + 1})`)
+      .join(' AND ');
+
+    const query = `
+      SELECT event_timestamp, data FROM ${schema}
+      WHERE ${searchQuery}
+      AND event_timestamp > $${words.length + 1}
+      ORDER BY event_timestamp
+      LIMIT $${words.length + 2};
+    `;
+
+    const values = [...words, lastTimestamp || '1970-01-01 00:00:00', parseInt(limit)];
+    const { rows } = await pool.query(query, values);
+
+    cache.set(cacheKey, rows);
+    const responseTime = ((performance.now() - startTime) / 1000).toFixed(3);
+
+    res.json({ source: 'database', responseTime: `(${responseTime} seconds)`, highlight: term, count: rows.length, data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+mmmmmmmmm
 
   SELECT data
       FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
