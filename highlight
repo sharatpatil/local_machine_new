@@ -1,3 +1,63 @@
+  SELECT  data
+      FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
+      WHERE document_vector @@ to_tsquery('simple', 'leid:* & isic:* & 8778:*')
+      ORDER BY event_timestamp
+      LIMIT 5000;
+
+
+app.get('/multi_word_search_plainto', async (req, res) => {
+  const { term = '', lastTimestamp, limit = 100, schema } = req.query;
+
+  const startTime = performance.now();
+  const cacheKey = `multi_search:${term}:last:${lastTimestamp}:limit:${limit}:schema:${schema}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      const responseTime = ((performance.now() - startTime) / 1000).toFixed(3);
+      return res.json({ source: 'cache', responseTime: `(${responseTime} seconds)`, highlight: term, count: cachedData.length, data: cachedData });
+    }
+
+    if (!term) {
+      return res.status(400).json({ error: 'Search term cannot be empty.' });
+    }
+
+    const searchQuery = term.split(' ').map(ter => `${ter}:*`).join(' & '); // Split terms by space and add wildcard
+
+
+    const query = `
+      SELECT data
+      FROM ${schema}
+      WHERE document_vector @@ to_tsquery('simple', '${searchQuery}')
+      ORDER BY event_timestamp
+      LIMIT $1;
+    `;
+
+
+    console.log(query)
+    const values = [parseInt(limit)];
+    const { rows } = await pool.query(query, values);
+
+    console.log(values)
+
+    cache.set(cacheKey, rows);
+    const responseTime = ((performance.now() - startTime) / 1000).toFixed(3);
+
+    res.json({ source: 'database', responseTime: `(${responseTime} seconds)`, highlight: term, count: rows.length, data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+i have modify the api like above its working but query is taking 1 sec to fetch records but api takes 2secs to fetch
+
+
+
+
 app.get('/multi_word_search1', async (req, res) => {
   const { term = '', lastTimestamp, limit = 100, schema } = req.query;
 
