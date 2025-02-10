@@ -12,6 +12,59 @@ app.get('/multi_word_search1', async (req, res) => {
       return res.json({ source: 'cache', responseTime: `(${responseTime} seconds)`, highlight: term, count: cachedData.length, data: cachedData });
     }
 
+    if (!term) {
+      return res.status(400).json({ error: 'Search term cannot be empty.' });
+    }
+
+    const query = `
+      SELECT event_timestamp, data
+      FROM ${schema}
+      WHERE document_vector @@ phraseto_tsquery('simple', $1)
+      AND event_timestamp > $2
+      ORDER BY event_timestamp
+      LIMIT $3;
+    `;
+
+    const values = [term, lastTimestamp || '1970-01-01 00:00:00', parseInt(limit)];
+    const { rows } = await pool.query(query, values);
+
+    cache.set(cacheKey, rows);
+    const responseTime = ((performance.now() - startTime) / 1000).toFixed(3);
+
+    res.json({ source: 'database', responseTime: `(${responseTime} seconds)`, highlight: term, count: rows.length, data: rows });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+...........
+
+
+
+
+
+
+
+app.get('/multi_word_search1', async (req, res) => {
+  const { term = '', lastTimestamp, limit = 100, schema } = req.query;
+
+  const startTime = performance.now();
+  const cacheKey = `multi_search:${term}:last:${lastTimestamp}:limit:${limit}:schema:${schema}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log('Serving from cache');
+      const responseTime = ((performance.now() - startTime) / 1000).toFixed(3);
+      return res.json({ source: 'cache', responseTime: `(${responseTime} seconds)`, highlight: term, count: cachedData.length, data: cachedData });
+    }
+
     const words = term.split(/\s+/).filter(Boolean);
     if (words.length === 0) {
       return res.status(400).json({ error: 'Search term cannot be empty.' });
