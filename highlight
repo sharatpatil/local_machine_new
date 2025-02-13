@@ -1,3 +1,46 @@
+const processSearchQuery = (query) => {
+  return query
+    .split(" ")
+    .map((word) => `${word}:*`)
+    .join(" & "); // Converts "leid 98556" to "leid:* & 98556:*"
+};
+
+app.get("/search_new", async (req, res) => {
+  try {
+    let { query, last_fetched_id, limit = 10 } = req.query;
+    limit = parseInt(limit);
+    last_fetched_id = last_fetched_id ? parseInt(last_fetched_id) : null;
+
+    if (!query) {
+      return res.status(400).json({ error: "Query parameter is required" });
+    }
+
+    const formattedQuery = processSearchQuery(query); // Process multi-word search
+
+    let sql = `
+      SELECT data FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
+      WHERE document_vector @@ to_tsquery('simple', $1)
+      ${last_fetched_id ? "AND identity > $2::BIGINT" : ""}
+      ORDER BY identity ASC
+      LIMIT $3;
+    `;
+
+    const values = last_fetched_id ? [formattedQuery, last_fetched_id, limit] : [formattedQuery, limit];
+
+    const result = await pool.query(sql, values);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
+
+....
+
 
 app.get("/search_new", async (req, res) => {
   try {
