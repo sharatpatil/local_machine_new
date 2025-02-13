@@ -1,3 +1,48 @@
+
+app.get("/search_new", async (req, res) => {
+  try {
+    let { query, last_fetched_id, limit = 10 } = req.query;
+    limit = parseInt(limit);
+    
+
+    if (!query) {
+      return res.status(400).json({ error: "Query parameter is required" });
+    }
+
+    let sql = `
+      SELECT data FROM bpsi_intv_6rvginkmsnhgprpfmkalqoe1
+      WHERE document_vector @@ to_tsquery('simple',$1)
+      ${last_fetched_id ? "AND identity > $2" : ""}
+      ORDER BY identity ASC
+      LIMIT $3;
+    `;
+
+    const values = last_fetched_id ? [query, last_fetched_id, limit] : [query, limit];
+
+    const result = await pool.query(sql, values);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+Error: error: could not determine data type of parameter $2
+    at C:\Users\2024698\bpsi-app-projects\react\node projects\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async C:\Users\2024698\bpsi-app-projects\react\node projects\app.js:1063:20 {
+  length: 111,
+
+in query add like this for multiple search       WHERE document_vector @@ to_tsquery('simple', 'leid:* & 98556:*')
+
+
+
+
+
+
+
+
 const express = require("express");
 const { Pool } = require("pg");
 
