@@ -1,3 +1,56 @@
+const express = require("express");
+const { Pool } = require("pg");
+
+const app = express();
+const port = 3000;
+
+const pool = new Pool({
+  user: "your_user",
+  host: "your_host",
+  database: "your_db",
+  password: "your_password",
+  port: 5432,
+});
+
+app.get("/search", async (req, res) => {
+  try {
+    let { query, last_fetched_id, limit = 10 } = req.query;
+    limit = parseInt(limit);
+
+    if (!query) {
+      return res.status(400).json({ error: "Query parameter is required" });
+    }
+
+    let sql = `
+      SELECT * FROM your_table
+      WHERE json_text_tsv @@ to_tsquery($1)
+      ${last_fetched_id ? "AND identifier > $2" : ""}
+      ORDER BY identifier ASC
+      LIMIT $3;
+    `;
+
+    const values = last_fetched_id ? [query, last_fetched_id, limit] : [query, limit];
+
+    const result = await pool.query(sql, values);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+
+
+
+
+curl "http://localhost:3000/search?query=developer&last_fetched_id=5&limit=10"
+
+curl "http://localhost:3000/search?query=developer&limit=10"
+
 
 SQL Error [54000]: ERROR: index row requires 8240 bytes, maximum size is 8191
   Where: parallel worker
