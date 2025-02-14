@@ -1,3 +1,254 @@
+
+import React, { useMemo, useState } from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Box, IconButton, Typography, Tooltip } from "@mui/material";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import JsonModal from "../../pages/Dialog/JsonModal";
+
+const HighlightedCardItem = ({ item, searchTerm }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [filterText, setFilterText] = useState("");
+
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters for regex
+  };
+
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(JSON.stringify(item, null, 2));
+    alert("JSON copied to clipboard!");
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([JSON.stringify(item, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "domain-json.json";
+    link.click();
+  };
+
+
+
+
+  const highlightText = (text) => {
+    if (!searchTerm || typeof text !== "string") return text;
+  
+    // Escape special characters in the searchTerm and create regex for multiple words
+    const escapedSearchTerm = escapeRegExp(searchTerm.trim());
+    const words = escapedSearchTerm.split(/\s+/).map((word) => escapeRegExp(word)); // Split into words
+  
+    const allWords = words.flatMap((word) => [word, [...word].reverse().join("")]);
+
+    // Generate regex for both word boundaries (\bword and word\b)
+    const regexPattern = allWords
+      .map((word) => `(\\b${word})|(${word}\\b)`) // Create patterns for both start and end
+      .join("|");
+  
+    // Create a single regex for all words
+    const regex = new RegExp(regexPattern, "gi");
+    
+    // console.log(regex)
+    // Split text into parts using the regex
+    const parts = text.split(regex);
+  
+    return parts.map((part, index) =>
+      regex.test(part) ? (
+        <span
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            fontWeight: "bold",
+            borderRadius: "2px",
+          }}
+        >
+          {part}
+        </span>
+      ) : (
+          part
+        )
+    );
+  };
+
+  
+
+ 
+
+
+
+
+  
+
+
+
+ 
+  const getHighlightedData = (obj) => {
+    const result = [];
+    const searchWords = searchTerm
+      ?.toLowerCase()
+      .trim()
+      .split(/\s+/); // Split the search term into individual words
+  
+    if (!searchWords || searchWords.length === 0) return result;
+  
+    // Generate reversed words for each search term
+    const reversedSearchWords = searchWords.map((word) =>
+      word.split("").reverse().join("")
+    );
+  
+    // Combine original and reversed search terms
+    const allSearchWords = [...searchWords, ...reversedSearchWords];
+  
+    Object.entries(obj).forEach(([key, value]) => {
+      const isNestedObject = typeof value === "object" && value !== null;
+  
+      // Ensure the key and value are strings for comparison
+      const keyString = key?.toLowerCase() || ""; // Fallback to empty string if undefined
+      const valueString = value?.toString().toLowerCase() || ""; // Fallback to empty string if undefined
+  
+      // Check if any search word matches the key or value
+      const keyMatches = allSearchWords.some((word) => keyString.includes(word));
+      const valueMatches = allSearchWords.some((word) => valueString.includes(word));
+  
+      if (isNestedObject) {
+        // Recursively process nested objects
+        result.push(...getHighlightedData(value));
+      } else if (keyMatches || valueMatches) {
+        // Add matches to the result
+        result.push({ key, value });
+      }
+    });
+  
+    return result;
+  };
+
+
+  const highlightedData = getHighlightedData(item);
+
+  return (
+    <Card
+      variant="outlined"
+      style={{
+        marginBottom: "20px",
+        border: "1px solid #ddd",
+        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+        borderRadius: "10px",
+        width: "80%",
+        margin: "20px auto", // Centers the Card horizontally
+      }}
+    >
+
+      <CardContent
+        style={{
+          backgroundColor: "#f9f9f9",
+          padding: "20px 20px 20px 20px",
+          borderBottom: "1px solid #ddd",
+          position: "relative", // Make the card a positioned container
+
+
+        }}
+      >
+        <Box
+      style={{
+        position: "absolute",
+        top:3, // Offset from top
+        right: 20, // Offset from right
+        bottom:20
+      }}
+    >
+      {/* <p style={{ fontSize: "12px", fontWeight: "bold", color: "#333" }}>
+        {Math.ceil(item.ts_rank)}
+      </p> */}
+    </Box>
+
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center", // Vertically align items
+            justifyContent: "space-between", // Text on the left, button on the right
+            padding: "10px 0", // Add vertical spacing around the row
+          }}
+        >
+          <Typography
+            variant="h10"
+            style={{
+              color: "#333",
+              fontSize: 14,
+            }}
+          >
+            {highlightedData.length > 0 ? (
+              highlightedData.map(({ key, value }, index) => (
+                <span key={index}>
+                  <strong>{highlightText(key)}:</strong> {highlightText(value?.toString())}
+                  <br />
+                </span>
+              ))
+            ) : (
+              <span>No matches found</span>
+            )}
+          </Typography>
+
+
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 8, // Offset from bottom
+              right: 8, // Offset from right
+              display: "flex",
+              flexDirection: "row",
+              gap: 1, // Spacing between icons
+            }}
+          >
+
+            <Tooltip title="Copy JSON">
+              <IconButton onClick={handleCopy}>
+                <ContentCopyIcon sx={{ color: "grey", fontSize:"18px" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Download JSON">
+              <IconButton onClick={handleDownload}>
+                <FileDownloadIcon sx={{ color: "grey" ,fontSize:"18px"}} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="View">
+            <IconButton onClick={() => setModalOpen(true)}>
+              <VisibilityIcon sx={{ color: "grey",fontSize:"18px" }} />
+            </IconButton>
+            </Tooltip>
+          </Box>
+
+        </Box>
+
+      </CardContent>
+
+      <JsonModal modalOpen={modalOpen} setModalOpen={setModalOpen} item={item} searchTerm={searchTerm} />
+
+    </Card>
+  );
+};
+
+const HighlightedCard = ({ data, searchTerm }) => {
+  return (
+    <div style={{ padding: "20px" }}>
+      {data.map((item, index) => (
+        <HighlightedCardItem key={index} item={item} searchTerm={searchTerm} />
+      ))}
+    </div>
+  );
+};
+
+export default HighlightedCard;
+
+
+
+
+
+
+
+
 const processSearchQuery = (query) => {
   return query
     .split(" ")
