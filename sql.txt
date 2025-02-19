@@ -65,4 +65,6 @@ https://drive.google.com/file/d/1v_q2RCmppUG7YT_WB_mUllMWfi5FXYkR/view?usp=shari
 
 https://drive.google.com/file/d/1v_q2RCmppUG7YT_WB_mUllMWfi5FXYkR/view?usp=sharing
 
+sc create MyNodeService binPath= "C:\path\to\myApp.exe" DisplayName= "My Node.js App Service" start= auto
+
 
