@@ -1,3 +1,104 @@
+import React, { useContext, useState } from "react";
+import { ContextApp } from "../utils/Context";
+import { useLocation } from "react-router-dom";
+
+
+
+
+const SamplePage = () => {
+    const { msgEnd } = useContext(ContextApp);
+    const location = useLocation();
+    const { message } = location.state || {};
+    const [msg, setMsg] = useState(message.text || "");
+    const [jsonResponse, setJsonResponse] = useState({
+        res: "response"
+    });
+    const [isTextareaVisible, setIsTextareaVisible] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const onRunClick = async () => {
+        console.log("Message:", msg);
+        setIsLoading(true);
+
+        try {
+            const response = await fetch(`http://localhost:3000/run_query?query=${encodeURIComponent(msg)}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            setJsonResponse(data);
+            setIsTextareaVisible(true); // Hide the textarea after the API call
+        } catch (error) {
+            console.error("There was a problem with the fetch operation:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="w-full bg-gray-700 flex justify-center overflow-hidden overflow-y-auto px-2 py-1 scroll">
+            <div className="w-full  lg:w-4/5 flex flex-col py-5">
+
+                <textarea
+                    style={{ height: '100px' }}
+                    className="bg-gray-800 text-white rounded-md"
+                    rows="4"
+                    placeholder="Write SQL Query"
+                    value={msg}
+                    onChange={(e) => setMsg(e.target.value)}
+                ></textarea>
+
+                <div className="w-full flex justify-end">
+                    <button className="bg-green-500 text-white px-4 py-2 rounded-md my-2"
+                        onClick={onRunClick}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Loading..." : "Run"}
+                    </button>
+                </div>
+                <div className="w-full flex flex-col items-center gap-2 mt-4" style={{height:'1000px'}}>
+                    {isLoading ? (
+                        <div className="loader text-white">Loading...</div>
+                    ) : (
+                        <>
+                        <style>
+                          {`
+                            .no-scrollbar::-webkit-scrollbar {
+                              display: none;
+                            }
+                          `}
+                        </style>
+                        <pre className="bg-gray-800 text-white p-4 rounded-md w-full overflow-auto no-scrollbar"
+                             style={{
+                               fontSize: "10px",
+                               scrollbarWidth: "none", /* Firefox */
+                               msOverflowStyle: "none" /* IE and Edge */
+                             }}>
+                          {JSON.stringify(jsonResponse, null, 2)}
+                        </pre>
+                      </>
+                    )}
+                </div>
+                <div ref={msgEnd} />
+            </div>
+        </div>
+    );
+};
+
+export default SamplePage;
+
+
+
+///
+
+
 import "./SearchData.scss";
 import { useState } from "react";
 import Chip from '@mui/material/Chip';
