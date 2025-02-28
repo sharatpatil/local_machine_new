@@ -1,3 +1,81 @@
+import React, { useContext } from "react";
+import { ContextApp } from "../utils/Context";
+import { RiFileCopyLine, RiPlayFill } from 'react-icons/ri';
+import { useNavigate } from "react-router-dom";
+import TypingText from "./TypingText";
+
+
+function Chat() {
+  const { message, msgEnd } = useContext(ContextApp);
+  
+  const navigate = useNavigate();
+  
+  const handleRunClick = (msg) => {
+    navigate("/sample", { state: { message: msg } });
+  };
+
+
+  return (
+    <div className="w-full h-[85%] flex items-center justify-center overflow-hidden overflow-y-auto px-2 py-1 scroll">
+      <div className="w-full lg:w-4/5 flex flex-col h-full items-start justify-start">
+        {message?.map((msg, i) => (
+          <div
+            key={i}
+            className={
+              msg.isBot
+                ? "flex items-start justify-between gap-2 lg:gap-5 my-2 bg-gray-800/80 p-3 rounded-md w-full"
+                : "flex items-start justify-between gap-2 lg:gap-5 my-2 p-3 w-full"
+            }
+          >
+            <div className="flex items-start gap-2 lg:gap-5 w-full">
+              <img
+                src={msg.isBot ? "/scb.jfif" : "/person.png"}
+                alt="user"
+                className="w-10 h-10 rounded object-cover"
+              />
+              {/* <p className="text-white text-[12px] break-words flex-grow">{msg?.text}</p> */}
+              
+
+              {msg?.text === 'Thinking' ? <TypingText text="Thinking! Please wait!!!" /> : <TypingText text={msg?.text} /> }
+            </div>
+              {msg.isBot ? ( <div className="relative group">
+              <RiPlayFill
+                className="text-white cursor-pointer flex-shrink-0"
+                onClick={() => {
+                  // navigator.clipboard.writeText(msg.text);
+
+                  handleRunClick(msg)
+                }}
+              />
+              <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
+                Run
+              </div>
+            </div>) : null }
+           
+
+            <div className="relative group">
+              <RiFileCopyLine
+                className="text-white cursor-pointer flex-shrink-0"
+                onClick={() => navigator.clipboard.writeText(msg.text)}
+              />
+              <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2">
+                Copy
+              </div>
+            </div>
+
+          </div>
+        ))}
+        <div ref={msgEnd} />
+      </div>
+    </div>
+  );
+}
+
+export default Chat;
+....
+
+
+
 import React, { useContext, useState } from "react";
 import { ContextApp } from "../utils/Context";
 import { useLocation } from "react-router-dom";
